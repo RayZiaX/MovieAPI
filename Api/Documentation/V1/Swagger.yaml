@@ -1,0 +1,278 @@
+openapi: '3.0.2'
+info:
+  title: MovieAPI
+  version: '1.0'
+servers:
+  - url: https://localhost:5000/api/v1
+
+tags:
+  - name: Movies
+
+paths:
+  /movie:
+    post:
+      summary: Ajout un nouveau film
+      operationId: createMovie
+      tags:
+        - Movies
+      requestBody:
+        $ref: "#/components/requestBodies/MovieCreateBody"
+
+      responses:
+        '201':
+          $ref: "#/components/responses/CreateMovieResponse"
+
+        '404':
+          $ref: "#/components/responses/ErrorMovieResponse"
+
+    get:
+      summary: Récupère l'ensemble des films
+      operationId: getAllFilms
+      tags:
+        - Movies
+      responses:
+        '200':
+          $ref: "#/components/responses/MoviesResponse"
+
+        '404':
+          $ref: "#/components/responses/ErrorMovieResponse"
+        
+  /movie/{movieId}:
+    get: 
+      summary: Récupère un seul film selon son identifiant
+      operationId: getMovieById
+      tags:
+        - "Movies"
+      parameters:
+        - $ref: "#/components/parameters/MovieParameter"
+      
+      responses:
+        '200':
+          $ref: "#/components/responses/MovieResponse"
+
+        '404':
+          $ref: "#/components/responses/ErrorMovieResponse"
+      
+    put: 
+      summary: Met à jour un film
+      operationId: updateMovieById
+      tags:
+        - "Movies"
+      parameters:
+        - $ref: "#/components/parameters/MovieParameter"
+
+      responses:
+        '200':
+          $ref: "#/components/responses/MovieResponse"
+
+        '422':
+          $ref: "#/components/responses/ErrorMovieResponse"  
+
+        '404':
+          $ref: "#/components/responses/ErrorMovieResponse"  
+
+    delete:
+      summary: Suppression d'un film
+      operationId: deleteMoviById
+      tags:
+        - "Movies"
+      parameters:
+        - $ref: "#/components/parameters/MovieParameter"
+      responses:
+      
+        '200':
+          $ref: "#/components/responses/ConfirmDeleteResponse"
+
+        '404':
+          $ref: "#/components/responses/ErrorMovieResponse"
+
+components:
+  
+  schemas:
+    Movie:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: l'identifiant de l'entité "Movie"
+        name:
+          type: string
+          description: le nom du film
+        description:
+          type: string
+          description: la description du film
+        date:
+          type: string
+          format: date
+          description: la date de parution du film
+
+    BaseBodyResponse:
+      type: object
+      description: Structure de base pour les reponses de l'API
+      properties:
+        data:
+          type: object
+          nullable: true
+        error:
+          type: object
+          nullable: true
+        meta:
+          type: object
+          nullable: false
+          $ref: '#/components/schemas/DefaultMeta'
+
+    DefaultMeta:
+      type: object
+      description: Contient des information diverse comme l'heure à laquel la réponse a été émit
+      properties:
+        dateEmit:
+          type: string
+          format: date-time
+          example: "2024-03-12T14:00:00Z"
+          description: La date à laquel la réponse à été émit
+    
+    BaseError:
+      description: Contient les informations d'une erreur émit par l'API
+      type: object
+      properties:
+        message:
+          type: string
+          example: 'Une erreur a été trouvé'
+          description: l'erreur détaillé
+        errorType:
+          type: string
+          example: BAD_REQUEST
+          description: le type d'erreur emit par l'api
+        statusCode:
+          type: integer
+          example: 404
+          description: le code d'erreur emit par l'api
+      required:
+        - message
+        - errorType
+        - statusCode
+
+  requestBodies:
+    
+    MovieCreateBody:
+      content: 
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+                description: le nom du film
+              description:
+                type: string
+                description: la description du film
+              date:
+                type: string
+                format: date
+                description: la date de parution du film
+
+    UpdateMovidBody:
+      content: 
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+                description: le nom du film
+              description:
+                type: string
+                description: la description du film
+              date:
+                type: string
+                format: date
+                description: la date de parution du film
+
+  responses:
+
+    MovieResponse:
+      description: Retourne le film
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/BaseBodyResponse'
+              - type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/Movie"
+
+    MoviesResponse:
+      description: Retournes l'ensemble des films
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/BaseBodyResponse'
+              - type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      films:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Movie'
+
+    ConfirmDeleteResponse:
+      description: Retourne un message de confirmation de suppression
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/BaseBodyResponse'
+              - type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        example: le film à bien été supprimé
+
+    CreateMovieResponse:
+      description: Retourne un message de confirmation ou non de la création du film
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/BaseBodyResponse'
+              - type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        example: le film à bien été créer
+      
+    ErrorMovieResponse:
+      description: Retourne une erreur rencontré par l'API
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/BaseBodyResponse'
+              - type: object
+                properties:
+                  error:
+                    $ref: "#/components/schemas/BaseError"
+
+  parameters:
+
+    MovieParameter:
+        in: path
+        name: movieId
+        schema:
+          type: integer
+        required: true
+        description: l'identifiant du film souhaité
+      
+        
+    
+  

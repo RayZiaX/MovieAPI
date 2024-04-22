@@ -13,3 +13,37 @@ exports.checkIdMovie = (req,res,next) => {
 
     next();
 }
+
+exports.checkNameMovie = (req, res, next) =>{
+    body = req.body;
+    if(body.name == undefined){
+        return res.sendError({message: "un film doit contenir un nom"},400, {timespan: new Date()})
+    }
+
+    if(body.name.length > 128){
+        return res.sendError({message: "le nom du film ne doit pas dépasser plus de 128 charactères"}, 400, {timespan: new Date()})
+    }
+
+    next()
+}
+
+exports.checkDescription = (req, res, next) => {
+    body = req.body;
+    if(body.description == undefined){
+        return res.sendError({message: "un film doit contenir une description"},400, {timespan: new Date()})
+    }
+
+    if(body.description.length > 2048){
+        return res.sendError({message: "la description du film ne doit pas dépasser plus de 2048 charactères"}, 400, {timespan: new Date()})
+    }
+
+    next()
+}
+
+exports.checkDate = (req,res,next) => {
+    body = req.body;
+    if(body.date == undefined){
+        return res.sendError({message: "un film doit contenir une date"},400, {timespan: new Date()})
+    }
+    next()
+}

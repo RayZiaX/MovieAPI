@@ -2,9 +2,10 @@ const express = require('express')
 const router = express.Router();
 const controller = require('../Controllers/moviesControler')
 const middleware = require('../Middleware/checkEntryMovies')
+
 router
     .get('/movie/:movieId', middleware.checkIdMovie,controller.getMovieById)
-    .put('/movie/:movieId', middleware.checkIdMovie,controller.updateMovieById)
+    .put('/movie/:movieId', middleware.checkIdMovie,middleware.checkNameMovie,middleware.checkDescription,middleware.checkDate,controller.updateMovieById)
     .delete('/movie/:movieId', middleware.checkIdMovie,controller.deleteMoviById);
 
 router

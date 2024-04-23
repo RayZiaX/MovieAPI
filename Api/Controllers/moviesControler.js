@@ -47,7 +47,6 @@ class MovieController{
     async deleteMoviByIdAsync (req, res){
         this.id = req.params.movieId
         this.serviceResponse = await this.service.deleteMovieById(this.id)
-        console.log(this.serviceResponse)
         if(this.serviceResponse.success){
             res.sendData(this.serviceResponse.data, new Date())
         }else{

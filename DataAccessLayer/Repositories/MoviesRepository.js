@@ -47,11 +47,8 @@ class MoviesRepository{
 
     async deteteMovie(id){
         try {
-            console.log("foo")
             this.result = await Movie.destroy({where: {id_movie: id}})
-            console.log(this.result)
             if(this.result > 0){
-                console.log("foo ici")
                 return {
                     success: true,
                     message: "le filme a été supprimé"

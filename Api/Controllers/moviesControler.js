@@ -1,56 +1,58 @@
-const { Movies } = require('../Models/index')
-const { MoviesServices } = require("../../BusinessLogicLayer/Services/moviesServices");
+const { Movies } = require('../Models/index');
 
-exports.createMovie = async (req, res) => {
-    data = req.body;
-    service = new MoviesServices();
-    resp = await service.createMovieAsync(data)
-    if(resp.success){
-        res.sendData(resp.data, new Date())
-    }else{
-        res.sendError(resp.message, 400, new Date())
+class MovieController{
+    constructor(movieServices){
+        this.service = movieServices;
+        this.serviceResponse = undefined;
+    }
+
+    async createMovieAsync(req, res){
+        this.data = req.body;
+        this.serviceResponse = await this.service.createMovieAsync(this.data)
+        if(this.serviceResponse.success){
+            res.sendData(this.serviceResponse.data, new Date())
+        }else{
+            res.sendError(this.serviceResponse.error, 400, new Date())
+        }
+    }
+
+    async getAllMoviesAsync(req,res){
+        this.serviceResponse = await this.service.getAllMoviesAsync()
+        if(this.serviceResponse.success){
+            res.sendData(this.serviceResponse.data, new Date())
+        }else{
+            res.sendError(this.serviceResponse.message, 400, new Date())
+        }
+    }
+
+    async getMovieByIdAsync(req, res){
+        this.serviceResponse = await this.service.getMovieById(req.params.movieId);
+        if(this.serviceResponse.success){
+            res.sendData(this.serviceResponse.data, new Date())
+        }else{
+            res.sendError(this.serviceResponse.error, 400, new Date())
+        }
+    }
+    
+    async updateMovieByIdAsync (req, res){
+        this.id = req.params.movieId
+        this.serviceResponse = await this.service.updateMovieById(this.id,req.body)
+        if(this.serviceResponse.success){
+            res.sendData(this.serviceResponse.data, new Date())
+        }else{
+            res.sendError(this.serviceResponse.message, 400, new Date())
+        }
+    }
+
+    async deleteMoviByIdAsync (req, res){
+        this.id = req.params.movieId
+        this.serviceResponse = await this.service.deleteMovieById(this.id)
+        if(this.serviceResponse.success){
+            res.sendData(this.serviceResponse.data, new Date())
+        }else{
+            res.sendError(this.serviceResponse.error, 400, new Date())
+        }
     }
 }
 
-exports.getAllMovies = async (req,res) => {
-    service = new MoviesServices();
-    resp = await service.getAllMoviesAsync()
-    if(resp.success){
-        res.sendData(resp.data, new Date())
-    }else{
-        res.sendError(resp.message, 400, new Date())
-    }
-}
-
-exports.getMovieById = async (req, res) => {
-    service = new MoviesServices();
-    resp = await service.getMovieById(req.params.movieId);
-    console.log(resp)
-    if(resp.success){
-        res.sendData(resp.data, new Date())
-    }else{
-        res.sendError(resp.error, 400, new Date())
-    }
-}
-
-exports.updateMovieById = async (req, res) => {
-    id = req.params.movieId
-    service = new MoviesServices()
-    resp = await service.updateMovieById(id,req.body)
-    if(resp.success){
-        res.sendData(resp.data, new Date())
-    }else{
-        res.sendError(resp.message, 400, new Date())
-    }
-}
-
-exports.deleteMoviById = async (req, res) => {
-    id = req.params.movieId
-    service = new MoviesServices()
-    resp = await service.deleteMovieById(id)
-    if(resp.success){
-        res.sendData(res.data, new Date())
-    }else{
-        res.sendError(resp.message, 400, new Date())
-    }
-}
+module.exports = MovieController

@@ -7,14 +7,23 @@ class MoviesRepository{
     }
 
     async createMovieAsync(data) {
-        const {name, description, date} = data
-        const movie = await Movie.create({name, description, date});
-    
-        return {
-            id: movie.id,
-            name: movie.name,
-            description: movie.description,
-            date: movie.date
+
+        try {
+            const {name, description, date} = data
+            const movie = await Movie.create({name, description, date});
+            return {
+                success: true,
+                movie: movie
+            }
+            
+        } catch (error) {
+            return {
+                success: false,
+                error:{
+                    message: `une erreur c'est produite durant la création du film: ${error}`,
+                    code: 500
+                }
+            }
         }
     }
 
@@ -38,11 +47,8 @@ class MoviesRepository{
 
     async deteteMovie(id){
         try {
-            console.log("foo")
             this.result = await Movie.destroy({where: {id_movie: id}})
-            console.log(this.result)
             if(this.result > 0){
-                console.log("foo ici")
                 return {
                     success: true,
                     message: "le filme a été supprimé"
@@ -117,4 +123,4 @@ class MoviesRepository{
 }
 
 
-module.exports = { MoviesRepository }
+module.exports = MoviesRepository

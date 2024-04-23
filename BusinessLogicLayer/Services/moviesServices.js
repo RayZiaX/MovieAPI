@@ -1,86 +1,68 @@
-const { MoviesRepository } = require("../../DataAccessLayer/Repositories/MoviesRepository")
+const MoviesRepository = require("../../DataAccessLayer/Repositories/MoviesRepository")
+const MovieServicesResponse = require("./ResponsesServices/MovieServicesResponse")
 
 class MoviesServices{
     constructor(){
         this.moviRepo = new MoviesRepository();
+        this.response = new MovieServicesResponse();
     }
 
     async createMovieAsync(data) {
-        try {
-            this.movie = await this.moviRepo.createMovieAsync(data);
-            return {
-                success : true,
-                data: this.movie
-            }
-        } catch (error) {
-            return {
-                success: false,
-                message: `une erreur a été rencontré ${error}`
-            }
+        this.result = await this.moviRepo.createMovieAsync(data);
+        this.response.setStatus(this.result.success)
+        if(this.result.success){
+            this.response.setData(this.result.movie)
+        }else{
+            this.response.setError(this.result.error)
         }
+        return this.response.toPrototype()
     }
 
     async getAllMoviesAsync(){
         this.result = await this.moviRepo.getAll()
+        this.response.setStatus(this.result.success)
         if(this.result.success){
-            return {
-                success: true,
-                data: this.result.movies
-            }
+            this.response.setData(this.result.movies)
         }else{
-            return {
-                success: false,
-                error: this.result.error
-            }
+            this.response.setError(this.result.error)
         }
+        return this.response.toPrototype()
     }
 
     async getMovieById(id){
         this.result = await this.moviRepo.getById(id)
+        this.response.setStatus(this.result.success)
+
         if(this.result.success){
-            return {
-                success: true,
-                data: this.result
-            }
+            this.response.setData(this.result.movie)
         }else{
-            return {
-                success: false,
-                error: this.result.message
-            }
+            this.response.setError(this.result.message)
         }
+        return this.response.toPrototype()
     }
 
     async updateMovieById(id,data){
         this.result = await this.moviRepo.updateMovie(id,data)
-        console.log(this.result)
+        this.response.setStatus(this.result.success)
+
         if(this.result.success){
-            return {
-                success: true,
-                data: this.result.movie
-            }
+            this.response.setData(this.result.movie)
         }else{
-            return {
-                success: false,
-                error: this.result.error
-            }
+            this.response.setError(this.result.error)
         }
+        return this.response
     }
 
     async deleteMovieById(id){
         this.result = await this.moviRepo.deteteMovie(id)
-        console.log(this.result)
+        this.response.setStatus(this.result.success)
         if(this.result.success){
-            return {
-                success: true,
-                data: this.result.message
-            }
+            this.response.setData(this.result.message)
         }else{
-            return {
-                success: false,
-                error: this.result.error
-            }
+            this.response.setError(this.result.message)
         }
+        return this.response.toPrototype()
     }
 }
 
-module.exports = { MoviesServices }
+module.exports = MoviesServices 

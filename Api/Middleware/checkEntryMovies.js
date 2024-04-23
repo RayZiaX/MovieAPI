@@ -3,7 +3,6 @@ const app = express()
 
 exports.checkIdMovie = (req,res,next) => {
     if(req.params.movieId == undefined){
-        console.log("pas d'id")
         return res.sendError({message:"l'identifiant ne peux pas être null"},400, {timespan: new Date()});
     }
 

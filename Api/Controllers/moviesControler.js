@@ -10,7 +10,7 @@ class MovieController{
         this.data = req.body;
         this.serviceResponse = await this.service.createMovieAsync(this.data)
         if(this.serviceResponse.success){
-            res.sendData(this.serviceResponse.data, new Date())
+            res.sendData(this.serviceResponse.data,201, new Date())
         }else{
             res.sendError(this.serviceResponse.error, 400, new Date())
         }

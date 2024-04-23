@@ -1,7 +1,7 @@
 
 function templateResponse (req,res,next){
-    res.sendData = (data, meta = {}) => {
-        res.json({
+    res.sendData = (data,statusCode = 200, meta = {}) => {
+        res.status(statusCode).json({
             data: data,
             error: {},
             meta: meta

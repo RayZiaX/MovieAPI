@@ -14,7 +14,7 @@ router
     .delete('/movie/:movieId', middleware.checkIdMovie,controller.deleteMoviByIdAsync.bind(controller));
 
 router
-    .post('/movie', controller.createMovieAsync.bind(controller))
+    .post('/movie', middleware.checkDescription, middleware.checkNameMovie, middleware.checkDate,controller.createMovieAsync.bind(controller))
     .get('/movie', controller.getAllMoviesAsync.bind(controller));
 
 module.exports = router

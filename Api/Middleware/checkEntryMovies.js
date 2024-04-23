@@ -16,6 +16,7 @@ exports.checkIdMovie = (req,res,next) => {
 
 exports.checkNameMovie = (req, res, next) =>{
     body = req.body;
+    console.log(body)
     if(body.name == undefined){
         return res.sendError({message: "un film doit contenir un nom"},400, {timespan: new Date()})
     }

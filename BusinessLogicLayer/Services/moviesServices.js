@@ -36,7 +36,7 @@ class MoviesServices{
         if(this.result.success){
             this.response.setData(this.result.movie)
         }else{
-            this.response.setError(this.result.message)
+            this.response.setError(this.result.error)
         }
         return this.response.toPrototype()
     }
@@ -59,7 +59,7 @@ class MoviesServices{
         if(this.result.success){
             this.response.setData(this.result.message)
         }else{
-            this.response.setError(this.result.message)
+            this.response.setError(this.result.error)
         }
         return this.response.toPrototype()
     }

@@ -56,13 +56,19 @@ class MoviesRepository{
             }else{
                 return {
                     success: false,
-                    message: "le filme n'a pas été supprimé"
+                    error:{
+                        message: "le filme n'a pas été supprimé",
+                        code: 404
+                    }
                 }
             }
         } catch (error) {
             return {
                 success: false,
-                message: `une erreur à été rencontré durant la suppression: ${error}`
+                error:{
+                    message: `une erreur à été rencontré durant la suppression: ${error}`,
+                    code: 500
+                }
             }
         }
     }
@@ -87,14 +93,16 @@ class MoviesRepository{
                     success: false,
                     error:{
                         message: "Aucun utilisateur n'a été modifié",
-                        code: 500
+                        code: 404
                     }
                 }
             }
         } catch (error) {
             return {
-                message: `une erreur a été réncontré durant la mise à jour: ${error}`,
-                code: 500
+                error:{
+                    message: `une erreur a été réncontré durant la mise à jour: ${error}`,
+                    code: 500
+                }
             }
         }
     }
@@ -110,13 +118,19 @@ class MoviesRepository{
             } else {
                 return {
                     success: false,
-                    message: `le film n'as pas été trouvé`
+                    error:{
+                        message: `le film n'as pas été trouvé`,
+                        code: 404
+                    }
                 }
             }
         } catch (error) {
             return {
                 success: false,
-                message: `Une erreur a été rencontré durant la récupération d'un film: ${error}`
+                error:{
+                    message: `Une erreur a été rencontré durant la récupération d'un film: ${error}`,
+                    code: 500
+                }
             }
         }
     }

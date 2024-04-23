@@ -1,5 +1,3 @@
-const express = require("express")
-const app = express()
 
 exports.checkIdMovie = (req,res,next) => {
     if(req.params.movieId == undefined){

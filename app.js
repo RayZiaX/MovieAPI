@@ -12,15 +12,14 @@ const moviesRouter = require("./Api/Routes/movieRoutes")
 const swagger = yaml.load(fs.readFileSync('./Api/Documentation/V1/Swagger.yaml'))
 const responseTemplate = require('./Api/Middleware/templateResponse')
 const logger = require('./Api/Middleware/logger')
-
-const { MovieContext } = require('./DataAccessLayer/Contexts/MovieContext')
-
+const injectContext = require('./Api/Middleware/InjectContext')
 const app = express()
 
 app.use(bodyParser.urlencoded({extended:false}))
 app.use(bodyParser.json())
 app.use(logger)
 app.use(responseTemplate)
+app.use(injectContext)
 
 app.use('/api/v1', moviesRouter);
 

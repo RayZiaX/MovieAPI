@@ -15,7 +15,14 @@ function templateResponse (req,res,next){
             meta: meta
         })
     };
-
+    res.sendError = (error,technicalError, statusCode = 400, meta = {})=>{
+        res.status(statusCode).json({
+            data: {},
+            technicalError: technicalError,
+            error: error,
+            meta: meta
+        })
+    }
     next();
 }
 

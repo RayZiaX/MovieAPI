@@ -1,63 +1,62 @@
-const MoviesRepository = require("../../DataAccessLayer/Repositories/MoviesRepository")
 const MovieServicesResponse = require("./ResponsesServices/MovieServicesResponse")
 
 class MoviesServices{
     constructor(){
-        this.moviRepo = new MoviesRepository();
         this.response = new MovieServicesResponse();
     }
 
-    async createMovieAsync(data) {
-        this.result = await this.moviRepo.createMovieAsync(data);
+    async createMovieAsync(req,data) {
+        this.result = await req.repositories.getMovieRepository().createAsync(data);
         this.response.setStatus(this.result.success)
+
         if(this.result.success){
-            this.response.setData(this.result.movie)
+            this.response.setData(this.result.entity)
         }else{
             this.response.setError(this.result.error)
         }
         return this.response.toPrototype()
     }
 
-    async getAllMoviesAsync(){
-        this.result = await this.moviRepo.getAll()
+    async getAllMoviesAsync(req){
+        this.result = await req.repositories.getMovieRepository().getAllAsync()
         this.response.setStatus(this.result.success)
         if(this.result.success){
-            this.response.setData(this.result.movies)
+            this.response.setData(this.result.entity)
         }else{
             this.response.setError(this.result.error)
         }
         return this.response.toPrototype()
     }
 
-    async getMovieById(id){
-        this.result = await this.moviRepo.getById(id)
+    async getMovieById(req,id){
+        this.result = await req.repositories.getMovieRepository().getByIdAsync(id)
         this.response.setStatus(this.result.success)
 
         if(this.result.success){
-            this.response.setData(this.result.movie)
+            this.response.setData(this.result.entity)
         }else{
             this.response.setError(this.result.error)
         }
         return this.response.toPrototype()
     }
 
-    async updateMovieById(id,data){
-        this.result = await this.moviRepo.updateMovie(id,data)
+    async updateMovieById(req,id,data){
+        this.result = await req.repositories.getMovieRepository().updateAsync(id,data)
         this.response.setStatus(this.result.success)
 
         if(this.result.success){
-            this.response.setData(this.result.movie)
+            this.response.setData(this.result.entity)
         }else{
             this.response.setError(this.result.error)
         }
         return this.response
     }
 
-    async deleteMovieById(id){
-        this.result = await this.moviRepo.deteteMovie(id)
+    async deleteMovieById(req,id){
+        this.result = await req.repositories.getMovieRepository().deleteAsync(id)
         this.response.setStatus(this.result.success)
         if(this.result.success){
-            this.response.setData(this.result.message)
+            this.response.setData(this.result.entity)
         }else{
             this.response.setError(this.result.error)
         }

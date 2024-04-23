@@ -1,5 +1,5 @@
 const { Movies } = require('../Models/index');
-
+require('dotenv').config()
 class MovieController{
     constructor(movieServices){
         this.service = movieServices;
@@ -8,49 +8,69 @@ class MovieController{
 
     async createMovieAsync(req, res){
         this.data = req.body;
-        this.serviceResponse = await this.service.createMovieAsync(this.data)
+        this.serviceResponse = await this.service.createMovieAsync(req,this.data)
         if(this.serviceResponse.success){
             res.sendData(this.serviceResponse.data,201, new Date())
         }else{
-            res.sendError(this.serviceResponse.error.message, this.serviceResponse.error.code, new Date())
+            if(process.env.ENV === "DEV"){
+                res.sendError(this.serviceResponse.error.message, this.serviceResponse.error.technicalMessage, this.serviceResponse.error.statuscode, new Date())
+            }else{
+                res.sendError(this.serviceResponse.error.message, this.serviceResponse.error.statuscode, new Date())
+            }
         }
     }
 
     async getAllMoviesAsync(req,res){
-        this.serviceResponse = await this.service.getAllMoviesAsync()
+        this.serviceResponse = await this.service.getAllMoviesAsync(req)
         if(this.serviceResponse.success){
             res.sendData(this.serviceResponse.data,200, new Date())
         }else{
-            res.sendError(this.serviceResponse.error.message, this.serviceResponse.error.code, new Date())
+            if(process.env.ENV === "DEV"){
+                res.sendError(this.serviceResponse.error.message, this.serviceResponse.error.technicalMessage, this.serviceResponse.error.statuscode, new Date())
+            }else{
+                res.sendError(this.serviceResponse.error.message, this.serviceResponse.error.statuscode, new Date())
+            }
         }
     }
 
     async getMovieByIdAsync(req, res){
-        this.serviceResponse = await this.service.getMovieById(req.params.movieId);
+        this.serviceResponse = await this.service.getMovieById(req,req.params.movieId);
         if(this.serviceResponse.success){
             res.sendData(this.serviceResponse.data,200, new Date())
         }else{
-            res.sendError(this.serviceResponse.error.message, this.serviceResponse.error.code, new Date())
+            if(process.env.ENV === "DEV"){
+                res.sendError(this.serviceResponse.error.message, this.serviceResponse.error.technicalMessage, this.serviceResponse.error.statuscode, new Date())
+            }else{
+                res.sendError(this.serviceResponse.error.message, this.serviceResponse.error.statuscode, new Date())
+            }
         }
     }
     
     async updateMovieByIdAsync (req, res){
         this.id = req.params.movieId
-        this.serviceResponse = await this.service.updateMovieById(this.id,req.body)
+        this.serviceResponse = await this.service.updateMovieById(req,this.id,req.body)
         if(this.serviceResponse.success){
             res.sendData(this.serviceResponse.data,200, new Date())
         }else{
-            res.sendError(this.serviceResponse.error.message, this.serviceResponse.error.code, new Date())
+            if(process.env.ENV === "DEV"){
+                res.sendError(this.serviceResponse.error.message, this.serviceResponse.error.technicalMessage, this.serviceResponse.error.statuscode, new Date())
+            }else{
+                res.sendError(this.serviceResponse.error.message, this.serviceResponse.error.statuscode, new Date())
+            }
         }
     }
 
     async deleteMoviByIdAsync (req, res){
         this.id = req.params.movieId
-        this.serviceResponse = await this.service.deleteMovieById(this.id)
+        this.serviceResponse = await this.service.deleteMovieById(req,this.id)
         if(this.serviceResponse.success){
             res.sendData(this.serviceResponse.data,200, new Date())
         }else{
-            res.sendError(this.serviceResponse.error.message, this.serviceResponse.error.code, new Date())
+            if(process.env.ENV === "DEV"){
+                res.sendError(this.serviceResponse.error.message,this.serviceResponse.error.technicalMessage, this.serviceResponse.error.statuscode, new Date())
+            }else{
+                res.sendError(this.serviceResponse.error.message, this.serviceResponse.error.statuscode, new Date())
+            }
         }
     }
 }

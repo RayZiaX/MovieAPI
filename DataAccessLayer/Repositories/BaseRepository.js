@@ -1,5 +1,5 @@
-const ErrorRepository = require('./ErrorRepository')
-const ResponseRepositories = require('./ResponseRepositories')
+const ErrorRepository = require('./Utils/ErrorRepository')
+const ResponseRepositories = require('./Utils/ResponseRepositories')
 
 
 class BaseRepository{
@@ -17,7 +17,7 @@ class BaseRepository{
                 this.response.setEntity(movie)
             } else {
                 this.response.setState(false)
-                this.response.setError(new ErrorRepository(`le ${this.entity} n'as pas été trouvé`, 404))
+                this.response.setError(new ErrorRepository(`le ${this.entityType} n'as pas été trouvé`, 404))
             }
         } catch (error) {
             this.response.setState(false)

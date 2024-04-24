@@ -15,7 +15,7 @@ function templateResponse (req,res,next){
             meta: meta
         })
     };
-    res.sendError = (error,technicalError, statusCode = 400, meta = {})=>{
+    res.sendDevError = (error, statusCode = 400, meta = {},technicalError)=>{
         res.status(statusCode).json({
             data: {},
             technicalError: technicalError,

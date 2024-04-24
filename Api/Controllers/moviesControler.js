@@ -13,7 +13,7 @@ class MovieController{
             res.sendData(this.serviceResponse.data,201, new Date())
         }else{
             if(process.env.ENV === "DEV"){
-                res.sendError(this.serviceResponse.error.message, this.serviceResponse.error.technicalMessage, this.serviceResponse.error.statuscode, new Date())
+                res.sendDevError(this.serviceResponse.error.message, this.serviceResponse.error.statuscode, new Date(), this.serviceResponse.error.technicalMessage)
             }else{
                 res.sendError(this.serviceResponse.error.message, this.serviceResponse.error.statuscode, new Date())
             }
@@ -26,7 +26,7 @@ class MovieController{
             res.sendData(this.serviceResponse.data,200, new Date())
         }else{
             if(process.env.ENV === "DEV"){
-                res.sendError(this.serviceResponse.error.message, this.serviceResponse.error.technicalMessage, this.serviceResponse.error.statuscode, new Date())
+                res.sendDevError(this.serviceResponse.error.message, this.serviceResponse.error.statuscode, new Date(), this.serviceResponse.error.technicalMessage)
             }else{
                 res.sendError(this.serviceResponse.error.message, this.serviceResponse.error.statuscode, new Date())
             }
@@ -39,7 +39,7 @@ class MovieController{
             res.sendData(this.serviceResponse.data,200, new Date())
         }else{
             if(process.env.ENV === "DEV"){
-                res.sendError(this.serviceResponse.error.message, this.serviceResponse.error.technicalMessage, this.serviceResponse.error.statuscode, new Date())
+                res.sendDevError(this.serviceResponse.error.message, this.serviceResponse.error.statuscode, new Date(), this.serviceResponse.error.technicalMessage)
             }else{
                 res.sendError(this.serviceResponse.error.message, this.serviceResponse.error.statuscode, new Date())
             }
@@ -53,7 +53,7 @@ class MovieController{
             res.sendData(this.serviceResponse.data,200, new Date())
         }else{
             if(process.env.ENV === "DEV"){
-                res.sendError(this.serviceResponse.error.message, this.serviceResponse.error.technicalMessage, this.serviceResponse.error.statuscode, new Date())
+                res.sendDevError(this.serviceResponse.error.message, this.serviceResponse.error.statuscode, new Date(), this.serviceResponse.error.technicalMessage)
             }else{
                 res.sendError(this.serviceResponse.error.message, this.serviceResponse.error.statuscode, new Date())
             }
@@ -67,7 +67,7 @@ class MovieController{
             res.sendData(this.serviceResponse.data,200, new Date())
         }else{
             if(process.env.ENV === "DEV"){
-                res.sendError(this.serviceResponse.error.message,this.serviceResponse.error.technicalMessage, this.serviceResponse.error.statuscode, new Date())
+                res.sendDevError(this.serviceResponse.error.message, this.serviceResponse.error.statuscode, new Date(), this.serviceResponse.error.technicalMessage)
             }else{
                 res.sendError(this.serviceResponse.error.message, this.serviceResponse.error.statuscode, new Date())
             }

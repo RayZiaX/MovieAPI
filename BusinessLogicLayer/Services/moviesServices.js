@@ -18,7 +18,13 @@ class MoviesServices{
     }
 
     async getAllMoviesAsync(req){
-        this.result = await req.repositories.getMovieRepository().getAllAsync()
+        const page = req.query.page;
+        if(page === 0){
+            page = 1
+        }
+        const offset = (page - 1) * req.query.limit;
+
+        this.result = await req.repositories.getMovieRepository().getMoviesByName(offset, req.query.limit)
         this.response.setStatus(this.result.success)
         if(this.result.success){
             this.response.setData(this.result.entity)

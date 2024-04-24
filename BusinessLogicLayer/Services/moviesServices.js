@@ -24,7 +24,7 @@ class MoviesServices{
         }
         const offset = (page - 1) * req.query.limit;
 
-        this.result = await req.repositories.getMovieRepository().getMoviesByName(offset, req.query.limit)
+        this.result = await req.repositories.getMovieRepository().getMoviesByName(req.query.name, req.query.limit,offset)
         this.response.setStatus(this.result.success)
         if(this.result.success){
             this.response.setData(this.result.entity)

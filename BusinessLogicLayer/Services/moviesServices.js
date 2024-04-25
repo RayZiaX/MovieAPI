@@ -1,14 +1,13 @@
-const MovieServicesResponse = require("./ResponsesServices/MovieServicesResponse")
+const BaseService = require("./BaseServices");
 
-class MoviesServices{
+class MoviesServices extends BaseService{
     constructor(){
-        this.response = new MovieServicesResponse();
+        super()
     }
 
     async createMovieAsync(req,data) {
         this.result = await req.repositories.getMovieRepository().createAsync(data);
         this.response.setStatus(this.result.success)
-
         if(this.result.success){
             this.response.setData(this.result.entity)
         }else{
@@ -32,7 +31,7 @@ class MoviesServices{
             data.movieCount = this.result.entity.count
             data.movies = this.result.entity.rows
             data.pages = Math.round(this.result.entity.count / req.query.limit)
-            data.previewPage = page - 1
+            data.previewPage = Number(page - 1)
             data.nextPage = Number(page) + 1
 
             this.response.setData(data)

@@ -1,5 +1,5 @@
 const { where, Op } = require('sequelize');
-const initUserModel = require('../Entities/movie');
+const initUserModel = require('../Entities/Movie');
 const BaseRepository = require('./BaseRepository');
 const ErrorRepository = require('./Utils/ErrorRepository');
 

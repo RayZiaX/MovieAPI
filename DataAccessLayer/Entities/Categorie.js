@@ -1,10 +1,11 @@
 const { DataTypes, Model } = require('sequelize');
 
-class Movie extends Model{}
+class Categorie extends Model{}
 
-function initMovieModel(context){
-    Movie.init({
-        id_movie:{
+
+function initCategoriModel(context){
+    Categorie.init({
+        id_categorie:{
             type: DataTypes.INTEGER,
             primaryKey: true,
             autoIncrement: true,
@@ -13,23 +14,19 @@ function initMovieModel(context){
             type: DataTypes.STRING,
             allowNull: false
         },
-        description: {
-            type: DataTypes.STRING,
+        active: {
+            type: DataTypes.BOOLEAN,
             allowNull: false
         },
-        date:{
-            type: DataTypes.DATE,
-            allowNull: false
-        }
     },{
         sequelize: context,
-        modelName: "Movie",
-        tableName: "movies",
+        modelName: "Categorie",
+        tableName: "categories",
         createdAt: false,
         updatedAt: false
     })
 
-    return Movie;
+    return Categorie;
 }
 
-module.exports = initMovieModel
+module.exports = initCategoriModel

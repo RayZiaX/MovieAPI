@@ -1,6 +1,7 @@
 const MovieController = require('../Controllers/moviesController');
 const express = require('express')
 const middleware = require('../Middleware/checkEntryMovies');
+const queryMiddleware = require('../Middleware/defaultCheckingQuery');
 const queryMovieMiddleware = require('../Middleware/checkQueryMovies');
 const MoviesServices = require('../../BusinessLogicLayer/Services/moviesServices');
 
@@ -16,6 +17,6 @@ router
 
 router
     .post('/movie', middleware.checkDescription, middleware.checkNameMovie, middleware.checkDate,controller.createMovieAsync.bind(controller))
-    .get('/movie', queryMovieMiddleware.checkExistQuery, queryMovieMiddleware.checkNameMovie, queryMovieMiddleware.checkPage, queryMovieMiddleware.checkLimit, controller.getAllMoviesAsync.bind(controller));
+    .get('/movie', queryMiddleware.checkExistQuery, queryMovieMiddleware.checkNameMovie, queryMiddleware.checkPage, queryMiddleware.checkLimit, controller.getAllMoviesAsync.bind(controller));
 
 module.exports = router

@@ -34,12 +34,12 @@ class MovieController extends BaseController{
             let nextPageUrl = this.buildQueryRequest(baseUrl,query);
             let prevPageUrl = undefined;
             
-            if(data.previewPage > 1){
+            if(data.previewPage >= 1){
                 query["page"] = data.previewPage
                 prevPageUrl = this.buildQueryRequest(baseUrl,query)
             }
 
-            let meta = new PaginationMeta(req.query.page,data.pages,data.movieCount,prevPageUrl,nextPageUrl)
+            let meta = new PaginationMeta(Number(req.query.page),data.pages,data.movieCount,prevPageUrl,nextPageUrl)
             
             res.sendData(data.movies,200, meta)
         }else{

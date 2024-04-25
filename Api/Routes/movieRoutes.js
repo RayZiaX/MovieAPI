@@ -1,4 +1,4 @@
-const MovieController = require('../Controllers/moviesControler');
+const MovieController = require('../Controllers/moviesController');
 const express = require('express')
 const middleware = require('../Middleware/checkEntryMovies');
 const queryMovieMiddleware = require('../Middleware/checkQueryMovies');

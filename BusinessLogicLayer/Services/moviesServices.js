@@ -26,8 +26,16 @@ class MoviesServices{
 
         this.result = await req.repositories.getMovieRepository().getMoviesByName(req.query.name, req.query.limit,offset)
         this.response.setStatus(this.result.success)
-        if(this.result.success){
-            this.response.setData(this.result.entity)
+
+        if(this.response.success){
+            const data = {}
+            data.movieCount = this.result.entity.count
+            data.movies = this.result.entity.rows
+            data.pages = Math.round(this.result.entity.count / req.query.limit)
+            data.previewPage = page - 1
+            data.nextPage = Number(page) + 1
+
+            this.response.setData(data)
         }else{
             this.response.setError(this.result.error)
         }

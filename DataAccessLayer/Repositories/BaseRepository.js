@@ -77,9 +77,9 @@ class BaseRepository{
         return this.response.toPrototype()
     }
 
-    async updateAsync(data, criteria){
+    async updateAsync(fields, criteria){
         try {
-            this.result = await this.entity.update({data}, {where: criteria})
+            this.result = await this.entity.update({fields}, {where: criteria})
             
             this.response.setState(this.result[0] > 0)
 

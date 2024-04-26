@@ -5,7 +5,7 @@ class DefaultMeta{
 
     toPrototype(){
         return {
-            timespan: this.timespan
+            timespan: this.timespan.toISOString()
         }
     }
 }

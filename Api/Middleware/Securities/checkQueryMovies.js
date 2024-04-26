@@ -6,3 +6,10 @@ exports.checkNameMovie = (req,res,next) => {
     }
     next();
 }
+
+exports.checkNameMovie = (req,res,next) => {
+    if(req.query.description == undefined){
+        return res.sendError({message:"la requête nécéssite un nom pour la recherche"},400, new DefaultMeta().toPrototype())
+    }
+    next();
+}

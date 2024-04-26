@@ -1,13 +1,11 @@
 const {Builder} = require('xml2js')
 
-function sendResponse(req,res, {data = {}, error = {}, meta = { timespan: new Date()}, statusCode = 400, technicalError = undefined}){
+function sendResponse(req,res, {data = {}, error = {}, meta = { timespan: new Date().toISOString()}, statusCode = 400, technicalError = undefined}){
     const responseObject = {
         data: data || {},
         error: error || {},
         meta: meta
     }
-
-    console.log(responseObject.data.movies)
 
     if(technicalError == undefined && process.env.ENV == "DEV"){
         responseObject.error.technicalError = technicalError
@@ -28,14 +26,14 @@ function sendResponse(req,res, {data = {}, error = {}, meta = { timespan: new Da
 }
 
 function templateResponse (req,res,next){
-    res.sendData = (data,statusCode = 200, meta = { timespan: new Date()}) => {
+    res.sendData = (data,statusCode = 200, meta = { timespan: new Date().toISOString()}) => {
         sendResponse(req,res, {data: data, statusCode: statusCode, meta: meta})
     };
 
-    res.sendError = (error, statusCode = 400, meta = { timespan: new Date()}) => {
+    res.sendError = (error, statusCode = 400, meta = { timespan: new Date().toISOString()}) => {
         sendResponse(req,res, {error: error, statusCode: statusCode, meta: meta})
     };
-    res.sendDevError = (error, statusCode = 400, meta = { timespan: new Date()},technicalError)=>{
+    res.sendDevError = (error, statusCode = 400, meta = { timespan: new Date().toISOString()},technicalError)=>{
         sendResponse(req,res,{error: error, statusCode: statusCode, meta: meta, technicalError: technicalError})
     }
     next();

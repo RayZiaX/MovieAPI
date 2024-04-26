@@ -9,7 +9,7 @@ exports.checkExistQuery = (req,res,next) => {
 
 exports.checkPage = (req,res,next) => {
     if(req.query.page == undefined){
-        return res.sendError({message:"la requête nécéssite une page pour la recherche"},400, new DefaultMeta().toPrototype())
+        req.query.page = 1
     }
 
     if(isNaN(req.query.page)){
@@ -21,7 +21,7 @@ exports.checkPage = (req,res,next) => {
 
 exports.checkLimit = (req,res,next) => {
     if(req.query.limit == undefined){
-        return res.sendError({message:"la requête nécéssite une limite pour la recherche"},400, new DefaultMeta().toPrototype())
+        req.query.limit = 10
     }
 
     if(isNaN(req.query.limit) || req.query.limit <= -1){

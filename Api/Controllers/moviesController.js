@@ -28,6 +28,7 @@ class MovieController extends BaseController{
             const data = this.serviceResponse.data
             let query = {
                 "name": req.query.name,
+                "description": req.query.description,
                 "page": data.nextPage,
                 "limit": req.query.limit
             }

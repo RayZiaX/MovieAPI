@@ -1,5 +1,5 @@
-const { DESCRIBE } = require("sequelize/lib/query-types");
 const BaseService = require("./BaseServices");
+const helper = require('../Helpers/helper')
 
 class MoviesServices extends BaseService{
     constructor(){
@@ -14,33 +14,31 @@ class MoviesServices extends BaseService{
             categorieId: body.categorieId
         }
 
-        this.result = await req.repositories.getMovieRepository().createMovieWithCategorieAsync(data);
-        this.response.setStatus(this.result.success)
-        if(this.result.success){
-            this.response.setData(this.result.entity)
+        let result = await req.repositories.getMovieRepository().createMovieWithCategorieAsync(data);
+
+        this.response.setStatus(result.success)
+        if(result.success){
+            result.entity.date = result.entity.date
+            this.response.setData(result.entity)
         }else{
-            this.response.setError(this.result.error)
+            this.response.setError(result.error)
         }
         return this.response.toPrototype()
     }
 
     async getAllMoviesAsync(req){
-        const page = req.query.page;
-        if(page === 0){
-            page = 1
-        }
-        const offset = (page - 1) * req.query.limit;
+        let paginationObject = helper.makePagination(req.query)
 
-        this.result = await req.repositories.getMovieRepository().getMoviesByName(req.query.name, req.query.limit,offset)
+        this.result = await req.repositories.getMovieRepository().getMoviesByName(req.query.name, req.query.description, paginationObject.limit, paginationObject.offset)
         this.response.setStatus(this.result.success)
-
+        
         if(this.response.success){
             const data = {}
             data.movieCount = this.result.entity.count
             data.movies = this.result.entity.rows
-            data.pages = Math.round(this.result.entity.count / req.query.limit)
-            data.previewPage = Number(page - 1)
-            data.nextPage = Number(page) + 1
+            data.pages = Math.ceil(this.result.entity.count / req.query.limit)
+            data.previewPage = Number(paginationObject.currentPage - 1)
+            data.nextPage = Number(paginationObject.currentPage) + 1
 
             this.response.setData(data)
         }else{
@@ -68,6 +66,7 @@ class MoviesServices extends BaseService{
             date: body.date,
             categorieId: body.categorieId
         }
+        console.log(data)
         this.result = await req.repositories.getMovieRepository().updateMovieAsync(id,data)
         this.response.setStatus(this.result.success)
 

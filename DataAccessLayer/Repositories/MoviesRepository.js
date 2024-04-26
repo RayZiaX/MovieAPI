@@ -27,7 +27,6 @@ class MoviesRepository extends BaseRepository{
                 this.response.setError(new ErrorRepository(`le ${this.entityType} n'as pas été trouvé`, 404))
             }
         } catch (error) {
-            console.log(error)
             this.response.setState(false)
             this.response.setError(new ErrorRepository(`Une erreur a été rencontré durant la récupération d'un ${this.entityType}`, 500, error))
         }
@@ -60,7 +59,19 @@ class MoviesRepository extends BaseRepository{
             const criteria ={
                 id_movie: id
             }
-            await this.updateAsync(data, criteria)
+            const fields = {
+                name: data.name,
+                description: data.description,
+                date: data.date,
+            }
+
+            let oldmovie = await this.getByIdAsync(id)
+            oldmovie.entity.name = fields.name;
+            oldmovie.entity.description = fields.description;
+            oldmovie.entity.date = fields.date;
+            
+            await oldmovie.entity.save()
+
             await this.context.moviesCategories.destroy({where: {id_movie: id}})
 
             await Promise.all(data.categorieId.map(cat => {
@@ -71,7 +82,6 @@ class MoviesRepository extends BaseRepository{
             this.response.setState(true)
             this.response.setEntity(movie)
         } catch (error) {
-            console.log(error)
             this.response.setState(false)
             this.response.setError(new ErrorRepository(`Une erreur c'est produite durant la modification du ${this.entityType}`,500,error))
         }
@@ -79,14 +89,35 @@ class MoviesRepository extends BaseRepository{
         return this.response.toPrototype()
     }
 
-    async getMoviesByName(name,limit,offset){
+    async getMoviesByName(name,description,limit,offset){
         try {
-            const movies = await this.entity.findAndCountAll({
-                where: {
-                    name: {
-                        [Op.iLike]: `%${name}%`
-                    }
-                },
+
+
+            let criteria = {}
+            if(name != undefined){
+                criteria.name = {[Op.iLike]: `%${name}%`}
+            }
+
+            if(description != undefined){
+                criteria.description = {[Op.iLike]: `%${description}%`}
+            }
+            let movies = {}
+            movies.rows = await this.entity.findAll({
+                include: [
+                    {
+                        model: this.context.categories,
+                        as: "categories",
+                        through: {
+                            attributes: []
+                        }
+                    }],
+                where: criteria,
+                offset: offset,
+                limit: limit
+            })
+
+            movies.count = await this.entity.count({
+                where: criteria,
                 offset: offset,
                 limit: limit
             })

@@ -19,6 +19,6 @@ router
 
 router
     .post('/movie', middleware.checkDescription, middleware.checkNameMovie, middleware.checkDate,controller.createMovieAsync.bind(controller))
-    .get('/movie', queryMiddleware.checkExistQuery, queryMovieMiddleware.checkNameMovie, queryMiddleware.checkPage, queryMiddleware.checkLimit, controller.getAllMoviesAsync.bind(controller));
+    .get('/movie', queryMiddleware.checkPage, queryMiddleware.checkLimit, controller.getAllMoviesAsync.bind(controller));
 
 module.exports = router

@@ -1,5 +1,5 @@
 const BaseService = require("./BaseServices");
-
+const helper = require('../Helpers/helper')
 class CategoriesServices extends BaseService{
     constructor(){
         super()
@@ -18,24 +18,20 @@ class CategoriesServices extends BaseService{
     }
 
     async getCategorieAndMoviesAsync(req, id){
-        let  page = req.query.page;
-        if(page === 0){
-            page = 1
-        }
-        let offset = (page - 1) * req.query.limit;
-        if(offset == 0){
-            offset = req.query.limit
-        }
-        let result = await req.repositories.getCategoriRepository().getCategoryAndMoviesByIdAsync(id, req.query.limit,offset)
+        let paginationObject = helper.makePagination(req.query)
+
+        console.log(paginationObject)
+
+        let result = await req.repositories.getCategoriRepository().getCategoryAndMoviesByIdAsync(id,paginationObject.offset, paginationObject.limit)
         this.response.setStatus(result.success)
         
         if( this.response.success){
             const data = {}
             data.movieCount = result.entity.total
             data.categorie = result.entity.categorie
-            data.pages = Math.round(result.entity.total / req.query.limit)
-            data.previewPage = Number(page - 1)
-            data.nextPage = Number(page) + 1
+            data.pages = Math.ceil(result.entity.total / req.query.limit)
+            data.previewPage = Number(paginationObject.currentPage - 1)
+            data.nextPage = Number(paginationObject.currentPage) + 1
             this.response.setData(data)
 
         }else{

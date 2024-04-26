@@ -15,7 +15,7 @@ class PaginationMeta extends DefaultMeta{
             currentPage:this.currentPage,
             totalPages:this.totalPages,
             totalResult:this.totalResult,
-            timespan: this.timespan,
+            timespan: this.timespan.toISOString(),
             previewPage: this.previewPage,
             nextPage: this.nextPage
         }

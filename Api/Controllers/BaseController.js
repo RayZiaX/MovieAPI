@@ -12,12 +12,12 @@ class BaseController{
     }
 
     buildQueryRequest(baseURL, dict){
-        let url = baseURL
+        let url = baseURL+"?"
         let index = 0
         for(let key in dict){
-            if(index === 0){
-                url = url + `?${key}=${dict[key]}`
-            }else{
+            if(url.charAt(url.length - 1 ) === "?" && dict[key] != undefined){
+                url = url + `${key}=${dict[key]}`
+            }else if(dict[key] != undefined) {
                 url = url + `&${key}=${dict[key]}`
             }
             index++

@@ -1,3 +1,4 @@
+const { DESCRIBE } = require("sequelize/lib/query-types");
 const BaseService = require("./BaseServices");
 
 class MoviesServices extends BaseService{
@@ -5,8 +6,15 @@ class MoviesServices extends BaseService{
         super()
     }
 
-    async createMovieAsync(req,data) {
-        this.result = await req.repositories.getMovieRepository().createAsync(data);
+    async createMovieAsync(req,body) {
+        let data = {
+            name: body.name,
+            description: body.description,
+            date: body.date,
+            categorieId: body.categorieId
+        }
+
+        this.result = await req.repositories.getMovieRepository().createMovieWithCategorieAsync(data);
         this.response.setStatus(this.result.success)
         if(this.result.success){
             this.response.setData(this.result.entity)
@@ -42,7 +50,7 @@ class MoviesServices extends BaseService{
     }
 
     async getMovieById(req,id){
-        this.result = await req.repositories.getMovieRepository().getByIdAsync(id)
+        this.result = await req.repositories.getMovieRepository().getMovieAndCategorieById(id)
         this.response.setStatus(this.result.success)
 
         if(this.result.success){
@@ -53,8 +61,14 @@ class MoviesServices extends BaseService{
         return this.response.toPrototype()
     }
 
-    async updateMovieById(req,id,data){
-        this.result = await req.repositories.getMovieRepository().updateAsync(id,data)
+    async updateMovieById(req,id,body){
+        const data = {
+            name: body.name,
+            description: body.description,
+            date: body.date,
+            categorieId: body.categorieId
+        }
+        this.result = await req.repositories.getMovieRepository().updateMovieAsync(id,data)
         this.response.setStatus(this.result.success)
 
         if(this.result.success){

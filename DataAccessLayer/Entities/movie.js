@@ -23,7 +23,7 @@ function initMovieModel(context){
         }
     },{
         sequelize: context,
-        modelName: "Movie",
+        modelName: "movie",
         tableName: "movies",
         createdAt: false,
         updatedAt: false

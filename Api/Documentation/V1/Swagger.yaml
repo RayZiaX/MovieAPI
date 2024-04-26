@@ -108,8 +108,8 @@ paths:
         - "Categories"
       parameters:
         - $ref: "#/components/parameters/CategorieIdParam"
-        - $ref: "#/components/parameters/CategorieIdParam"
-        - $ref: "#/components/parameters/CategorieIdParam"
+        - $ref: "#/components/parameters/LimitParam"
+        - $ref: "#/components/parameters/PageParam"
       
       responses:
         '200':
@@ -118,9 +118,28 @@ paths:
         '404':
           $ref: "#/components/responses/ErrorResponse"
 
+  /categories:
+    get:
+      summary: Opération qui permet de récupérer les catégories selon le status
+      operationId: getCategoriesByStatus
+      tags:
+        - "Categories"
+      parameters:
+        - $ref: "#/components/parameters/CategorieStatusParam"
+        - $ref: "#/components/parameters/PageParam"
+        - $ref: "#/components/parameters/LimitParam"
+      
+      responses:
+        "200":
+          $ref: "#/components/responses/CategoriesResponse"
+        
+        "404":
+          $ref: "#/components/responses/ErrorResponse"
+      
 components:
   
   schemas:
+    
     Movie:
       type: object
       properties:
@@ -247,6 +266,12 @@ components:
                 type: string
                 format: date
                 description: la date de parution du film
+              categoriesId:
+                type: array
+                items:
+                  type: integer
+                  format: int32
+                  example: 1
 
     UpdateMovidBody:
       content: 
@@ -347,6 +372,25 @@ components:
                     type: object
                     $ref: "#/components/schemas/PaginationMeta"
 
+    CategoriesResponse:
+      description: Retourne un ensemble de catégories
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/BaseBodyResponse"
+              - type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      categories:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/Categorie"
+                  meta:
+                      $ref: "#/components/schemas/PaginationMeta"
+
     ErrorResponse:
       description: Retourne une erreur rencontré par l'API
       content:
@@ -404,3 +448,11 @@ components:
         format: int32
       required: true
       description: l'identifiant de la catégorie
+
+    CategorieStatusParam:
+      in: query
+      name: catStatus
+      schema:
+        type: string
+      required: true
+      description: le statut de la catégorie

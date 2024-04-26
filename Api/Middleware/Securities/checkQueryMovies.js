@@ -1,4 +1,4 @@
-const DefaultMeta = require('../Models/DefaultMeta')
+const DefaultMeta = require('../../Models/DefaultMeta')
 
 exports.checkNameMovie = (req,res,next) => {
     if(req.query.name == undefined){

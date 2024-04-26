@@ -9,19 +9,18 @@ class Repositories{
 
     getMovieRepository(){
         if(this.movieRepo == undefined){
-            this.movieRepo = new MoviesRepository(this.context)
+            this.movieRepo = new MoviesRepository(this.context,this.context.movies)
         }
         return this.movieRepo;
     }
 
     getCategoriRepository(){
         if(this.categorieRepo == undefined){
-            this.categorieRepo = new CategoriesRepository(this.context)
+            this.categorieRepo = new CategoriesRepository(this.context,this.context.categories)
         }
 
         return this.categorieRepo;
     }
-
 }
 
 module.exports = Repositories

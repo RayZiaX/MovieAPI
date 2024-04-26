@@ -7,6 +7,8 @@ function sendResponse(req,res, {data = {}, error = {}, meta = { timespan: new Da
         meta: meta
     }
 
+    console.log(responseObject.data.movies)
+
     if(technicalError == undefined && process.env.ENV == "DEV"){
         responseObject.error.technicalError = technicalError
     }

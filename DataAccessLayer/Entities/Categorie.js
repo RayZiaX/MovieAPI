@@ -20,7 +20,7 @@ function initCategoriModel(context){
         },
     },{
         sequelize: context,
-        modelName: "Categorie",
+        modelName: "categorie",
         tableName: "categories",
         createdAt: false,
         updatedAt: false

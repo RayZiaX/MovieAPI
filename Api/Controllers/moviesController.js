@@ -8,8 +8,8 @@ class MovieController extends BaseController{
     }
 
     async createMovieAsync(req, res){
-        this.data = req.body;
-        this.serviceResponse = await this.service.createMovieAsync(req,this.data)
+        let data = req.body;
+        this.serviceResponse = await this.service.createMovieAsync(req, data)
         if(this.serviceResponse.success){
             res.sendData(this.serviceResponse.data,201, new Date())
         }else{

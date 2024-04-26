@@ -3,7 +3,8 @@ const ResponseRepositories = require('./Utils/ResponseRepositories')
 
 
 class BaseRepository{
-    constructor(entity, type){
+    constructor(context,entity, type){
+        this.context = context
         this.entity = entity
         this.response = new ResponseRepositories()
         this.entityType = type
@@ -11,10 +12,10 @@ class BaseRepository{
 
     async getByIdAsync(id){
         try {
-            const movie = await this.entity.findByPk(id);
-            if (movie) {
+            const entity = await this.entity.findByPk(id);
+            if (entity) {
                 this.response.setState(true)
-                this.response.setEntity(movie)
+                this.response.setEntity(entity)
             } else {
                 this.response.setState(false)
                 this.response.setError(new ErrorRepository(`le ${this.entityType} n'as pas été trouvé`, 404))
@@ -76,14 +77,9 @@ class BaseRepository{
         return this.response.toPrototype()
     }
 
-    async updateAsync(id,data){
+    async updateAsync(data, criteria){
         try {
-            const {name, description, date} = data
-            this.result = await this.entity.update({
-                name: name,
-                description: description,
-                date: date
-            }, {where: {id_movie: id}})
+            this.result = await this.entity.update({data}, {where: criteria})
             
             this.response.setState(this.result[0] > 0)
 

@@ -7,7 +7,7 @@ function sendResponse(req,res, {data = {}, error = {}, meta = { timespan: new Da
         meta: meta
     }
 
-    if(technicalError == undefined && process.env.ENV == "DEV"){
+    if(technicalError != undefined && process.env.ENV == "DEV"){
         responseObject.error.technicalError = technicalError
     }
 

@@ -14,10 +14,6 @@ function initCategoriModel(context){
             type: DataTypes.STRING,
             allowNull: false
         },
-        active: {
-            type: DataTypes.BOOLEAN,
-            allowNull: false
-        },
     },{
         sequelize: context,
         modelName: "categorie",

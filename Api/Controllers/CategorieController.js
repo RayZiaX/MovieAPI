@@ -39,12 +39,10 @@ class CategorieController extends BaseController{
                 query["page"] = data.previewPage
                 prevPageUrl = this.buildQueryRequest(baseUrl,query)
             }
-            data.data = {}
-            data.data.categorie = data.categorie
-            data.data.categorie.movies = data.categorie.movies
-            data.data.movies = data.categorie.movies
+            let response = {}
+            response.categorie = data.categorie
             let meta = new PaginationMeta(Number(req.query.page),data.pages,data.movieCount,prevPageUrl,nextPageUrl)
-            res.sendData(data.data,200, meta)
+            res.sendData(response,200, meta)
 
         }else{
             if(this.config.environment === "DEV"){

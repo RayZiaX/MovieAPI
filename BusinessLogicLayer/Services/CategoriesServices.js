@@ -20,11 +20,8 @@ class CategoriesServices extends BaseService{
     async getCategorieAndMoviesAsync(req, id){
         let paginationObject = helper.makePagination(req.query)
 
-        console.log(paginationObject)
-
         let result = await req.repositories.getCategoriRepository().getCategoryAndMoviesByIdAsync(id,paginationObject.offset, paginationObject.limit)
         this.response.setStatus(result.success)
-        
         if( this.response.success){
             const data = {}
             data.movieCount = result.entity.total

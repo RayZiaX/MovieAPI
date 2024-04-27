@@ -65,7 +65,6 @@ class MoviesServices extends BaseService{
             date: body.date,
             categorieId: body.categorieId
         }
-        console.log(data)
         this.result = await req.repositories.getMovieRepository().updateMovieAsync(id,data)
         this.response.setStatus(this.result.success)
         

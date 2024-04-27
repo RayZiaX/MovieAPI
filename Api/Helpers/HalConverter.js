@@ -3,6 +3,23 @@ class HalConverter{
         
     }
 
+
+    paginationHalCategories(req, categories, paginationObject){
+        let copy = Object.assign({},categories)
+        let halCategories = this._paginationHalObject(paginationObject)
+        let arrayMovies = []
+        let halCategorie = this._buildHalObject(req,copy, "categorie", copy.idCategorie)
+        copy.movies.map(movie => {
+            let prototype = this._buildHalObject(req,movie, "movie", movie.idMovie,true)
+            arrayMovies.push(prototype)
+        })
+
+        halCategories = this._mergeMainObject(halCategories, halCategorie)
+        halCategories.movies = arrayMovies
+
+        return halCategories
+    }
+
     paginationHalMovies(req, movies, paginationObject){
         let copy = Object.assign([], movies)
         let halMovies = this._paginationHalObject(paginationObject)
@@ -16,6 +33,13 @@ class HalConverter{
         return halMovies
     }
 
+    _mergeMainObject(halObject,object){
+        for(let key in Object.keys(object)){
+            halObject[key] = object[key]
+        }
+        return halObject
+    }
+
     _buildHalObject(req, obj,name, value, recursive = false){
         let prototype = this._buildLinksHalObject(req,name, value)
         for(let key of Object.keys(obj)){
@@ -27,7 +51,7 @@ class HalConverter{
                 value.forEach(x => {
                     for(let k in x){
                         if(k.startsWith("id")){
-                            prototype[key].push(this._buildHalObject(req,x,key.slice(0,-1),x[k]))
+                            prototype[key].push(this._buildHalObject(req,x,key.slice(0,-1),x[k],false))
                         }
                     }
                 });

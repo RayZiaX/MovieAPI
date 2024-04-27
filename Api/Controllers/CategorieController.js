@@ -27,21 +27,17 @@ class CategorieController extends BaseController{
         if(this.serviceResponse.success){
             const baseUrl = this.getBaseURL(req);
             const data = this.serviceResponse.data
+            let response = {}
             let query = {
-                "page": data.nextPage,
+                "page": undefined,
                 "limit": req.query.limit
             }
 
-            let nextPageUrl = this.buildQueryRequest(baseUrl,query);
-            let prevPageUrl = undefined;
+            let paginationObject = this._buildPaginationObject(query,baseUrl,data.nextPage,Number(req.query.page),data.previewPage,data.pages)
             
-            if(data.previewPage >= 1){
-                query["page"] = data.previewPage
-                prevPageUrl = this.buildQueryRequest(baseUrl,query)
-            }
-            let response = {}
             response.categorie = data.categorie
-            let meta = new PaginationMeta(Number(req.query.page),data.pages,data.movieCount,prevPageUrl,nextPageUrl)
+            response.halData = this.halConverter.paginationHalCategories(req,response.categorie,paginationObject)
+            let meta = new PaginationMeta(Number(req.query.page),data.pages,data.movieCount,paginationObject.prev.href,paginationObject.next.href)
             res.sendData(response,200, meta)
 
         }else{

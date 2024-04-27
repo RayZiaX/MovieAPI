@@ -53,7 +53,6 @@ class CategoriesRepository extends BaseRepository{
             this.response.setEntity(data)
 
         } catch (error) {
-            console.log(error)
             this.response.setState(false)
             this.response.setError(new ErrorRepository(`Une erreur a été rencontré durant la récupération d'un ${this.entityType}`, 500, error))
         }

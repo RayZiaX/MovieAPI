@@ -29,20 +29,19 @@ class MoviesServices extends BaseService{
     async getAllMoviesAsync(req){
         let paginationObject = helper.makePagination(req.query)
 
-        this.result = await req.repositories.getMovieRepository().getMoviesByName(req.query.name, req.query.description, paginationObject.limit, paginationObject.offset)
-        this.response.setStatus(this.result.success)
-        
+        let result = await req.repositories.getMovieRepository().getMoviesByCriteria(req.query.name, req.query.description, paginationObject.limit, paginationObject.offset)
+        this.response.setStatus(result.success)
         if(this.response.success){
             const data = {}
-            data.movieCount = this.result.entity.count
-            data.movies = this.result.entity.rows
-            data.pages = Math.ceil(this.result.entity.count / req.query.limit)
+            data.movieCount = result.entity.count
+            data.movies = result.entity.rows
+
+            data.pages = Math.ceil(result.entity.count / req.query.limit)
             data.previewPage = Number(paginationObject.currentPage - 1)
             data.nextPage = Number(paginationObject.currentPage) + 1
-
             this.response.setData(data)
         }else{
-            this.response.setError(this.result.error)
+            this.response.setError(result.error)
         }
         return this.response.toPrototype()
     }
@@ -69,7 +68,7 @@ class MoviesServices extends BaseService{
         console.log(data)
         this.result = await req.repositories.getMovieRepository().updateMovieAsync(id,data)
         this.response.setStatus(this.result.success)
-
+        
         if(this.result.success){
             this.response.setData(this.result.entity)
         }else{
@@ -88,6 +87,24 @@ class MoviesServices extends BaseService{
         }
         return this.response.toPrototype()
     }
+
+    _toHal(req,entity,paginationObject){
+        let copy = Object.assign({}, entity)
+        let categories = Object.assign([],copy.categories)
+        let arrCatHal = []
+        delete copy.categories
+        if(categories != undefined){
+            categories.forEach(cat => {
+                arrCatHal.push(new HalHelper(cat).toObject(req,"categorie",cat.idCategorie))
+            });
+        }
+        let halEntity = new HalHelper(copy).toObject(req,"movie",copy.idMovie)
+        halEntity._embedded = {
+            categories: arrCatHal
+        }
+        return halEntity
+    }
+
 }
 
 module.exports = MoviesServices 

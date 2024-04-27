@@ -1,3 +1,4 @@
+const HalConverter = require('../Helpers/HalConverter')
 class BaseController{
     constructor(serivce){
         this.service = serivce;
@@ -5,6 +6,7 @@ class BaseController{
         this.config = {
             environment: process.env.ENV
         }
+        this.halConverter = new HalConverter()
     }
 
     getBaseURL(req){

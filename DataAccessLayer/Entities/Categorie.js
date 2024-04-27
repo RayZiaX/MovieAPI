@@ -5,10 +5,11 @@ class Categorie extends Model{}
 
 function initCategoriModel(context){
     Categorie.init({
-        id_categorie:{
+        idCategorie:{
             type: DataTypes.INTEGER,
             primaryKey: true,
             autoIncrement: true,
+            field: "id_categorie"
         },
         name: {
             type: DataTypes.STRING,

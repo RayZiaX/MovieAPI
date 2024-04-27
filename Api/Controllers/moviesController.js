@@ -1,7 +1,6 @@
 const { Movies } = require('../Models/index');
 const PaginationMeta = require('../Models/PaginationMeta');
 const BaseController = require('./BaseController');
-
 class MovieController extends BaseController{
     constructor(movieServices){
         super(movieServices)
@@ -26,23 +25,23 @@ class MovieController extends BaseController{
         if(this.serviceResponse.success){
             const baseUrl = this.getBaseURL(req);
             const data = this.serviceResponse.data
+            let response = {
+                data: this.serviceResponse.data,
+                halData: []
+            }
+
             let query = {
                 "name": req.query.name,
                 "description": req.query.description,
                 "page": data.nextPage,
                 "limit": req.query.limit
             }
-            let nextPageUrl = this.buildQueryRequest(baseUrl,query);
-            let prevPageUrl = undefined;
             
-            if(data.previewPage >= 1){
-                query["page"] = data.previewPage
-                prevPageUrl = this.buildQueryRequest(baseUrl,query)
-            }
+            let paginationObject = this._buildPaginationObject(query,baseUrl,data.nextPage,req.query.page,data.previewPage, data.pages)
+            response.halData = this.halConverter.paginationHalMovies(req,data.movies,paginationObject)
+            let meta = new PaginationMeta(Number(req.query.page),data.pages,data.movieCount,paginationObject.prev.href,paginationObject.next.href)
 
-            let meta = new PaginationMeta(Number(req.query.page),data.pages,data.movieCount,prevPageUrl,nextPageUrl)
-            
-            res.sendData(data.movies,200, meta)
+            res.sendData(response,200, meta)
         }else{
             if(this.config.environment === "DEV"){
                 res.sendDevError(this.serviceResponse.error.message, this.serviceResponse.error.statuscode, new Date(), this.serviceResponse.error.technicalMessage)
@@ -91,6 +90,73 @@ class MovieController extends BaseController{
                 res.sendError(this.serviceResponse.error.message, this.serviceResponse.error.statuscode, new Date())
             }
         }
+    }
+
+    _toHal(req,entity,paginationObject){
+        let copy = Object.assign({}, entity)
+        let categories = Object.assign([],copy.categories)
+        let arrCatHal = []
+        delete copy.categories
+        if(categories != undefined){
+            categories.forEach(cat => {
+                arrCatHal.push(new HalHelper(cat).toObject(req,"categorie",cat.idCategorie))
+            });
+        }
+        let halEntity = new HalHelper(copy).toObject(req,"movie",copy.idMovie,paginationObject)
+        halEntity._embedded = {
+            categories: arrCatHal
+        }
+        return halEntity
+    }
+
+   /**
+    * Méthode qui pêrmet de construire l'objet de pagination
+    * @param {*} query 
+    * @param {*} baseUrl 
+    * @param {*} nextPage 
+    * @param {*} currentPage 
+    * @param {*} previewPage 
+    * @param {*} last 
+    * @returns un objet pour la pagination
+    */
+    _buildPaginationObject(query,baseUrl,nextPage,currentPage,previewPage, last){
+        
+        let paginationObject = {
+            next:{},
+            prev: {},
+            current: {},
+            first: {},
+            last: {}
+        }
+        
+        query["page"] = nextPage
+        paginationObject.next = {
+            href: this.buildQueryRequest(baseUrl,query)
+        }
+
+        if(previewPage >= 1){
+            query["page"] = previewPage
+            paginationObject.prev = {
+                href: this.buildQueryRequest(baseUrl,query)
+            }
+        }
+
+        query["page"] = currentPage
+        paginationObject.current = {
+            href: this.buildQueryRequest(baseUrl,query)
+        }
+
+        query["page"] = 1
+        paginationObject.first = {
+            href: this.buildQueryRequest(baseUrl,query)
+        }
+
+        query["page"] = last
+        paginationObject.last = {
+            href: this.buildQueryRequest(baseUrl,query)
+        }
+
+        return paginationObject;
     }
 }
 

@@ -4,10 +4,11 @@ class Movie extends Model{}
 
 function initMovieModel(context){
     Movie.init({
-        id_movie:{
+        idMovie:{
             type: DataTypes.INTEGER,
             primaryKey: true,
             autoIncrement: true,
+            field: "id_movie"
         },
         name: {
             type: DataTypes.STRING,

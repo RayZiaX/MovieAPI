@@ -19,9 +19,12 @@ class MoviesRepository extends BaseRepository{
                         }
                     }]
             });
-            if (movie) {
+
+            let untrackEntities = movie.toJSON()
+
+            if (untrackEntities) {
                 this.response.setState(true)
-                this.response.setEntity(movie)
+                this.response.setEntity(untrackEntities)
             } else {
                 this.response.setState(false)
                 this.response.setError(new ErrorRepository(`le ${this.entityType} n'as pas été trouvé`, 404))
@@ -57,7 +60,7 @@ class MoviesRepository extends BaseRepository{
     async updateMovieAsync(id, data){
         try {
             const criteria ={
-                id_movie: id
+                idMovie: id
             }
             const fields = {
                 name: data.name,
@@ -89,10 +92,8 @@ class MoviesRepository extends BaseRepository{
         return this.response.toPrototype()
     }
 
-    async getMoviesByName(name,description,limit,offset){
+    async getMoviesByCriteria(name,description,limit,offset){
         try {
-
-
             let criteria = {}
             if(name != undefined){
                 criteria.name = {[Op.iLike]: `%${name}%`}
@@ -101,8 +102,8 @@ class MoviesRepository extends BaseRepository{
             if(description != undefined){
                 criteria.description = {[Op.iLike]: `%${description}%`}
             }
-            let movies = {}
-            movies.rows = await this.entity.findAll({
+            let movies = {rows: [], count: 0}
+            let rows = await this.entity.findAll({
                 include: [
                     {
                         model: this.context.categories,
@@ -115,6 +116,10 @@ class MoviesRepository extends BaseRepository{
                 offset: offset,
                 limit: limit
             })
+
+            rows.forEach(row => {
+                movies.rows.push(row.toJSON())
+            });
 
             movies.count = await this.entity.count({
                 where: criteria,

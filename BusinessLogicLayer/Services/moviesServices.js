@@ -14,11 +14,10 @@ class MoviesServices extends BaseService{
             categorieId: body.categorieId
         }
 
-        let result = await req.repositories.getMovieRepository().createMovieWithCategorieAsync(data);
+        let result = await req.repositories.getMovieRepository().createMovieWithCategorieAsync({data:data,tracking:false});
 
         this.response.setStatus(result.success)
         if(result.success){
-            result.entity.date = result.entity.date
             this.response.setData(result.entity)
         }else{
             this.response.setError(result.error)
@@ -29,13 +28,17 @@ class MoviesServices extends BaseService{
     async getAllMoviesAsync(req){
         let paginationObject = helper.makePagination(req.query)
 
-        let result = await req.repositories.getMovieRepository().getMoviesByCriteria(req.query.name, req.query.description, paginationObject.limit, paginationObject.offset)
+        let result = await req.repositories.getMovieRepository().getMoviesByCriteria({
+            name:req.query.name, description:req.query.description
+            , limit:paginationObject.limit, offset:paginationObject.offset
+            , trackin:false
+        })
+
         this.response.setStatus(result.success)
         if(this.response.success){
             const data = {}
             data.movieCount = result.entity.count
             data.movies = result.entity.rows
-
             data.pages = Math.ceil(result.entity.count / req.query.limit)
             data.previewPage = Number(paginationObject.currentPage - 1)
             data.nextPage = Number(paginationObject.currentPage) + 1
@@ -47,13 +50,12 @@ class MoviesServices extends BaseService{
     }
 
     async getMovieById(req,id){
-        this.result = await req.repositories.getMovieRepository().getMovieAndCategorieById(id)
-        this.response.setStatus(this.result.success)
-
-        if(this.result.success){
-            this.response.setData(this.result.entity)
+        let result = await req.repositories.getMovieRepository().getMovieAndCategorieById({id:id, tracking:false})
+        this.response.setStatus(result.success)
+        if(result.success){
+            this.response.setData(result.entity)
         }else{
-            this.response.setError(this.result.error)
+            this.response.setError(result.error)
         }
         return this.response.toPrototype()
     }
@@ -65,7 +67,7 @@ class MoviesServices extends BaseService{
             date: body.date,
             categorieId: body.categorieId
         }
-        this.result = await req.repositories.getMovieRepository().updateMovieAsync(id,data)
+        this.result = await req.repositories.getMovieRepository().updateMovieAsync({id:id,data:data,tracking:false})
         this.response.setStatus(this.result.success)
         
         if(this.result.success){
@@ -77,8 +79,10 @@ class MoviesServices extends BaseService{
     }
 
     async deleteMovieById(req,id){
-        this.result = await req.repositories.getMovieRepository().deleteAsync(id)
+        this.result = await req.repositories.getMovieRepository().deleteAsync({id:id})
+
         this.response.setStatus(this.result.success)
+        
         if(this.result.success){
             this.response.setData(this.result.entity)
         }else{
@@ -86,24 +90,6 @@ class MoviesServices extends BaseService{
         }
         return this.response.toPrototype()
     }
-
-    _toHal(req,entity,paginationObject){
-        let copy = Object.assign({}, entity)
-        let categories = Object.assign([],copy.categories)
-        let arrCatHal = []
-        delete copy.categories
-        if(categories != undefined){
-            categories.forEach(cat => {
-                arrCatHal.push(new HalHelper(cat).toObject(req,"categorie",cat.idCategorie))
-            });
-        }
-        let halEntity = new HalHelper(copy).toObject(req,"movie",copy.idMovie)
-        halEntity._embedded = {
-            categories: arrCatHal
-        }
-        return halEntity
-    }
-
 }
 
 module.exports = MoviesServices 

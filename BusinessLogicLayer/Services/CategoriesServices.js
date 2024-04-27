@@ -6,7 +6,7 @@ class CategoriesServices extends BaseService{
     }
 
     async getCategorieByIdAsync (req,id){
-        let result = await req.repositories.getCategoriRepository().getByIdAsync(id)
+        let result = await req.repositories.getCategoriRepository().getByIdAsync({id: id, tracking: false})
         this.response.setStatus(result.success)
         if(this.response.success){
             this.response.setData(result.entity)
@@ -20,7 +20,7 @@ class CategoriesServices extends BaseService{
     async getCategorieAndMoviesAsync(req, id){
         let paginationObject = helper.makePagination(req.query)
 
-        let result = await req.repositories.getCategoriRepository().getCategoryAndMoviesByIdAsync(id,paginationObject.offset, paginationObject.limit)
+        let result = await req.repositories.getCategoriRepository().getCategoryAndMoviesByIdAsync({id:id,offset:paginationObject.offset, limit:paginationObject.limit,tracking:false})
         this.response.setStatus(result.success)
         if( this.response.success){
             const data = {}

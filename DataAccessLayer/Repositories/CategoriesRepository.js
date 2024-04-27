@@ -8,20 +8,21 @@ class CategoriesRepository extends BaseRepository{
         super(context,entity, "categorie")
     }
 
-    async getCategoryAndMoviesByIdAsync(id, offset, limit){
+    async getCategoryAndMoviesByIdAsync({id, offset, limit, tracking=false}){
         try {
             const data = {}
-            let result = await this.getByIdAsync(id)
+            let result = await this.getByIdAsync({id:id, tracking: tracking})
 
             if(result.success){
-                data.categorie = result.entity.toJSON()
+
+                data.categorie = result.entity
+
                 data.categorie.movies = []
             }else{
                 this.response.setState(false)
                 this.response.setError(result.error)
                 return this.response.toPrototype()
             }
-
 
             let {rows, count} = await this.context.movies.findAndCountAll({
                 include: [{
@@ -39,16 +40,21 @@ class CategoriesRepository extends BaseRepository{
             })
             data.total = count
             
-            let movies = await Promise.all(rows.map(async row =>{
+            data.categorie.movies = await Promise.all(rows.map(async row =>{
                 let movieCats = await row.getCategories({
                     joinTableAttributes: []
                 })
-                let movie = row.toJSON()
-                movie.categories = movieCats
+                let movie = {}
+                if(tracking){
+                    movie = row
+                    movie.categories = movieCats
+                }else{
+                    movie = row.toJSON()
+                    movie.categories = movieCats.map(cat => cat.toJSON())  
+                }
                 return movie
             }))
 
-            data.categorie.movies = movies
             this.response.setState(true)
             this.response.setEntity(data)
 

@@ -10,12 +10,16 @@ class BaseRepository{
         this.entityType = type
     }
 
-    async getByIdAsync(id){
+    async getByIdAsync({id,tracking = false}){
         try {
             const entity = await this.entity.findByPk(id);
             if (entity) {
                 this.response.setState(true)
-                this.response.setEntity(entity)
+                if(tracking){
+                    this.response.setEntity(entity)
+                }else{
+                    this.response.setEntity(entity.toJSON())
+                }
             } else {
                 this.response.setState(false)
                 this.response.setError(new ErrorRepository(`le ${this.entityType} n'as pas été trouvé`, 404))
@@ -28,12 +32,15 @@ class BaseRepository{
         return this.response.toPrototype()
     }
 
-    async getAllAsync(){
-        
+    async getAllAsync({tracking = false}){
         try {
             const movies = await this.entity.findAll();
             this.response.setState(true)
-            this.response.setEntity(movies)
+            if(tracking){
+                this.response.setEntity(movies)
+            }else{
+                this.response.setEntity(movies.map(movie => { movie.toJSON()}))
+            }
         } catch (error) {
             
             this.response.setState(false)
@@ -43,13 +50,15 @@ class BaseRepository{
         return this.response.toPrototype()
     }
 
-    async createAsync(data) {
-
+    async createAsync({data, tracking = false}) {
         try {
-            const {name, description, date} = data
-            const movie = await this.entity.create({name, description, date});
+            const movie = await this.entity.create(data);
             this.response.setState(true)
-            this.response.setEntity(movie)
+            if(tracking){
+                this.response.setEntity(movie)
+            }else{
+                this.response.setEntity(movie.toJSON())
+            }
             
         } catch (error) {
             this.response.setState(false)
@@ -59,7 +68,7 @@ class BaseRepository{
         return this.response.toPrototype()
     }
 
-    async deleteAsync(id){
+    async deleteAsync({id}){
         try {
             this.result = await this.entity.destroy({where: {id_movie: id}})
             this.response.setState(this.result > 0)
@@ -77,7 +86,7 @@ class BaseRepository{
         return this.response.toPrototype()
     }
 
-    async updateAsync(fields, criteria){
+    async updateAsync({fields, criteria, tracking=false}){
         try {
             this.result = await this.entity.update({fields}, {where: criteria})
             
@@ -85,7 +94,11 @@ class BaseRepository{
 
             if(this.response.success){
                 this.movie = await this.entity.findByPk(id);
-                this.response.setEntity(this.movie)
+                if(tracking){
+                    this.response.setEntity(this.movie)
+                }else{
+                    this.response.setEntity(this.movie.toJSON())
+                }
             }else{
                 this.response.setError(new ErrorRepository(`Aucun ${this.entityType} n'a été modifié`,404))
             }

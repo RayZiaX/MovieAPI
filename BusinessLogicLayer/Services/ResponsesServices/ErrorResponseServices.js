@@ -6,7 +6,7 @@ class ErrorResponseServices{
     toPrototype(){
         return{
             message: this.errorMessage,
-            statusCode: this.statusCode
+            statuscode: this.statusCode
         }
     }
 }

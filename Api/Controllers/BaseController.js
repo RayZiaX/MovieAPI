@@ -1,5 +1,9 @@
 const HalConverter = require('../Helpers/HalConverter')
 const ControllerResponse = require('./ControllerResponse')
+
+/**
+ * Classe de base pour les différents contrôleur de l'api
+ */
 class BaseController{
     constructor(serivce){
         this.service = serivce;
@@ -8,14 +12,24 @@ class BaseController{
             environment: process.env.ENV
         }
         this.response = new ControllerResponse()
-        console.log("instanciation du controller réposne")
         this.halConverter = new HalConverter()
     }
 
+    /**
+     * Méthode qui permet de récupérer la base de l'url pour les redirections
+     * @param {la requête} req 
+     * @returns la base de l'url
+     */
     getBaseURL(req){
         return `${req.protocol}://${req.get('host')}${req.baseUrl}${req.path}`
     }
 
+    /**
+     * Méthode qui permet de construire l'url pour la redirection
+     * @param {la base de l'url} baseURL 
+     * @param {le dictionnaire contenant les valeurs à ajouter dans l'url} dict 
+     * @returns l'url construit et prêt pour la redirection
+     */
     buildQueryRequest(baseURL, dict){
         let url = baseURL+"?"
         let index = 0

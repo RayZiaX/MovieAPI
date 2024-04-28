@@ -33,7 +33,6 @@ app.use('/api/v1/swagger', swaggerUi.serve, swaggerUi.setup(swagger))
 
 contextInstance.sync()
 .then(() => {
-  console.log('Les modèles ont été synchronisés avec succès.');
   injectDatas.injectCategories(contextInstance)
 })
 .catch(error => {

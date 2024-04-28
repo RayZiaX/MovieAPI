@@ -1,11 +1,18 @@
 const BaseController = require('./BaseController')
 const PaginationMeta = require('../Models/PaginationMeta')
-
+/**
+ * Contrôleur centré sur les catégories
+ */
 class CategorieController extends BaseController{
     constructor(service){
         super(service)
     }
 
+    /**
+     * Méthode qui permet de récupérer une catégorie selon son identifiant
+     * @param {la requête} req 
+     * @param {la réponse} res 
+     */
     async getCategorieByIdAsync(req,res){
         this.serviceResponse = await this.service.getCategorieByIdAsync(req,req.params.categorieId);
         if(this.serviceResponse.success){
@@ -18,6 +25,11 @@ class CategorieController extends BaseController{
         }
     }
 
+    /**
+     * Méthode qui permet de récupérer une catégorie avec ses flims
+     * @param {la requête} req 
+     * @param {la réponse} res 
+     */
     async getCategorieAndMoviesAsync(req,res){
         let id = req.params.categorieId
         this.serviceResponse = await this.service.getCategorieAndMoviesAsync(req,id)

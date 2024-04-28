@@ -4,8 +4,8 @@ exports.checkIdMovie = (req,res,next) => {
         return res.sendError({message:"l'identifiant ne peux pas être null"},400, {timespan: new Date()});
     }
 
-    if(req.params.movieId == 0){
-        return res.sendError({message:"l'identifiant ne peux pas être 0"},404, {timespan: new Date()});
+    if(req.params.movieId <= 0){
+        return res.sendError({message:"l'identifiant ne peux pas être 0 ou moins"},404, {timespan: new Date()});
     }
 
     next();

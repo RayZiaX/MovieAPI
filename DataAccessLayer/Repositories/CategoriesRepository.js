@@ -1,4 +1,4 @@
-const { where } = require("sequelize");
+const { where, Op } = require("sequelize");
 const BaseRepository = require("./BaseRepository");
 const ErrorRepository = require('./Utils/ErrorRepository');
 
@@ -60,8 +60,28 @@ class CategoriesRepository extends BaseRepository{
 
         } catch (error) {
             this.response.setState(false)
-            this.response.setError(new ErrorRepository(`Une erreur a été rencontré durant la récupération d'un ${this.entityType}`, 500, error))
+            this.response.setError(new ErrorRepository(`Une erreur a été rencontré durant la récupération d'un ${this.entityType}`, 500, error).toPrototype())
         }
+        return this.response.toPrototype()
+    }
+
+    async existsRange(ids){
+        try {
+            let count = await this.context.categories.count({
+                where:{
+                    idCategorie: {[Op.in]: ids}
+                }
+            })
+            this.response.setState(count === ids.length)
+            if(!this.response.success){
+                this.response.setError(new ErrorRepository(`certaines catégories ne sont pas présente en base`,404).toPrototype())
+            }
+
+        } catch (error) {
+            this.response.setState(false)
+            this.response.setError(new ErrorRepository(`une erreur c'est produit durant le compte des ${this.entityType}s`,500,error).toPrototype())
+        }
+
         return this.response.toPrototype()
     }
 }

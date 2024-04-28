@@ -4,12 +4,8 @@ const initCategoriModel = require('../Entities/Categorie');
 const initMovieCategorieModel = require('../Entities/MovieCategorie');
 
 class MovieContext extends Sequelize{
-    constructor(dbname,username, password, host, provider){
-        super(dbname,username,password,{
-            host: host,
-            dialect: provider,
-            logging: process.env.ENV === "DEV" && process.env.DB_LOG === "true"
-        })
+    constructor(dbname,username, password,dbContextOptions){
+        super(dbname,username,password,dbContextOptions)
         this._onModelCreating()
     }
 

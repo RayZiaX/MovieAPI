@@ -22,11 +22,11 @@ class BaseRepository{
                 }
             } else {
                 this.response.setState(false)
-                this.response.setError(new ErrorRepository(`le ${this.entityType} n'as pas été trouvé`, 404))
+                this.response.setError(new ErrorRepository(`le ${this.entityType} n'as pas été trouvé`, 404).toPrototype())
             }
         } catch (error) {
             this.response.setState(false)
-            this.response.setError(new ErrorRepository(`Une erreur a été rencontré durant la récupération d'un ${this.entityType}`, 500, error))
+            this.response.setError(new ErrorRepository(`Une erreur a été rencontré durant la récupération d'un ${this.entityType}`, 500, error).toPrototype())
         }
 
         return this.response.toPrototype()
@@ -44,7 +44,7 @@ class BaseRepository{
         } catch (error) {
             
             this.response.setState(false)
-            this.response.setError(new ErrorRepository(`Une erreur est survenu durant la récupération de l'ensemble des ${this.entityType}`,500,error))
+            this.response.setError(new ErrorRepository(`Une erreur est survenu durant la récupération de l'ensemble des ${this.entityType}`,500,error).toPrototype())
         }
 
         return this.response.toPrototype()
@@ -62,7 +62,7 @@ class BaseRepository{
             
         } catch (error) {
             this.response.setState(false)
-            this.response.setError(new ErrorRepository(`Une erreur c'est produite durant la création du ${this.entityType}`,500,error))
+            this.response.setError(new ErrorRepository(`Une erreur c'est produite durant la création du ${this.entityType}`,500,error).toPrototype())
         }
 
         return this.response.toPrototype()
@@ -76,11 +76,11 @@ class BaseRepository{
             if(this.response.success){
                 this.response.setEntity(`Le ${this.entityType} a été supprimé`)
             }else{
-                this.response.setError(new ErrorRepository(`Le ${this.entityType} n'a pas été supprimé ou trouvé`,404))
+                this.response.setError(new ErrorRepository(`Le ${this.entityType} n'a pas été supprimé ou trouvé`,404).toPrototype())
             }
         } catch (error) {
             this.response.setState(false)
-            this.response.setError(new ErrorRepository(`une erreur à été rencontré durant la suppression d ${this.entityType}`,500,error))
+            this.response.setError(new ErrorRepository(`une erreur à été rencontré durant la suppression d ${this.entityType}`,500,error).toPrototype())
         }
 
         return this.response.toPrototype()
@@ -100,11 +100,11 @@ class BaseRepository{
                     this.response.setEntity(this.movie.toJSON())
                 }
             }else{
-                this.response.setError(new ErrorRepository(`Aucun ${this.entityType} n'a été modifié`,404))
+                this.response.setError(new ErrorRepository(`Aucun ${this.entityType} n'a été modifié`,404).toPrototype())
             }
         } catch (error) {
             this.response.setState(false)
-            this.response.setError(new ErrorRepository(`une erreur a été réncontré durant la mise à jour`,500,error))
+            this.response.setError(new ErrorRepository(`une erreur a été réncontré durant la mise à jour`,500,error).toPrototype())
         }
 
         return this.response.toPrototype()

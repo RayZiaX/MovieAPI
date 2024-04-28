@@ -22,32 +22,31 @@ class MoviesRepository extends BaseRepository{
 
             let entity = movie
 
-            if(!tracking){
-                entity = entity.toJSON()
-            }
-
             if (entity) {
+                if(!tracking){
+                    entity = entity.toJSON()
+                }
                 this.response.setState(true)
                 this.response.setEntity(entity)
             } else {
                 this.response.setState(false)
-                this.response.setError(new ErrorRepository(`le ${this.entityType} n'as pas été trouvé`, 404))
+                this.response.setError(new ErrorRepository(`le ${this.entityType} n'as pas été trouvé`, 404).toPrototype())
             }
         } catch (error) {
             this.response.setState(false)
-            this.response.setError(new ErrorRepository(`Une erreur a été rencontré durant la récupération d'un ${this.entityType}`, 500, error))
+            this.response.setError(new ErrorRepository(`Une erreur a été rencontré durant la récupération d'un ${this.entityType}`, 500, error).toPrototype())
         }
         return this.response.toPrototype()
     }
 
     async createMovieWithCategorieAsync({data:{name,description,date,categoriesId}, tracking=false}){
         try {
+
             let movie = await this.createAsync({data:{name, description, date}, tracking:tracking});
             if(movie.success){
                 await Promise.all(categoriesId.map(id => {
                     return this.context.moviesCategories.create({movieId: movie.entity.idMovie,categorieId: id})
                 }))
-    
                 movie = await this.getMovieAndCategorieById({id:movie.entity.idMovie, tracking:tracking})
     
                 this.response.setState(true)
@@ -55,11 +54,11 @@ class MoviesRepository extends BaseRepository{
             }else{
                 this.response.setError(movie.error)
             }
-            
+
         } catch (error) {
-            console.error(error)
+
             this.response.setState(false)
-            this.response.setError(new ErrorRepository(`Une erreur c'est produite durant la création du ${this.entityType}`,500,error))
+            this.response.setError(new ErrorRepository(`Une erreur c'est produite durant la création du films et l'association des ses catégories`,500,error).toPrototype())
         }
 
         return this.response.toPrototype()
@@ -79,7 +78,6 @@ class MoviesRepository extends BaseRepository{
             oldmovie.entity.date = fields.date;
             
             await oldmovie.entity.save()
-            console.log(data.categoriesId)
             await this.context.moviesCategories.destroy({where: {id_movie: id}})
 
             await Promise.all(data.categoriesId.map(cat => {
@@ -91,9 +89,8 @@ class MoviesRepository extends BaseRepository{
             this.response.setState(true)
             this.response.setEntity(movie.entity)
         } catch (error) {
-            console.log(error)
             this.response.setState(false)
-            this.response.setError(new ErrorRepository(`Une erreur c'est produite durant la modification du ${this.entityType}`,500,error))
+            this.response.setError(new ErrorRepository(`Une erreur c'est produite durant la modification du ${this.entityType}`,500,error).toPrototype())
         }
 
         return this.response.toPrototype()
@@ -103,11 +100,11 @@ class MoviesRepository extends BaseRepository{
         try {
             let criteria = {}
             if(name != undefined){
-                criteria.name = {[Op.iLike]: `%${name}%`}
+                criteria.name = {[Op.like]: `%${name}%`}
             }
 
             if(description != undefined){
-                criteria.description = {[Op.iLike]: `%${description}%`}
+                criteria.description = {[Op.like]: `%${description}%`}
             }
             let movies = {rows: [], count: 0}
 
@@ -138,8 +135,8 @@ class MoviesRepository extends BaseRepository{
             this.response.setState(true)
             this.response.setEntity(movies)
         }catch(error){
-            this.response.setState(true)
-            this.response.setError(new ErrorRepository("une erreur a été recontré durant le processus", 500, error))
+            this.response.setState(false)
+            this.response.setError(new ErrorRepository("une erreur a été recontré durant le processus", 500, error).toPrototype())
         }
 
         return this.response.toPrototype()

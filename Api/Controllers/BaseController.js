@@ -8,6 +8,7 @@ class BaseController{
             environment: process.env.ENV
         }
         this.response = new ControllerResponse()
+        console.log("instanciation du controller réposne")
         this.halConverter = new HalConverter()
     }
 

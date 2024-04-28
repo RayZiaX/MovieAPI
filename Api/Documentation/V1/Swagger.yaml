@@ -1,0 +1,478 @@
+openapi: '3.0.2'
+info:
+  title: MovieAPI
+  version: '1.0'
+servers:
+  - url: http://localhost:5000/api/v1
+    description: Environnement local
+  - url: https://api.server.test:5000/api/v1
+    description: Environnement de test
+  - url: https://api.server.staging:5000/api/v1
+    description: Environnement de pré-production
+  - url: https://api.server.prod:5000/api/v1
+    description: Environnement de production
+
+tags:
+  - name: Movies
+  - name: Categories
+
+paths:
+  /movie:
+    post:
+      summary: Ajout un nouveau film
+      operationId: createMovie
+      tags:
+        - Movies
+      requestBody:
+        $ref: "#/components/requestBodies/MovieCreateBody"
+
+      responses:
+        '201':
+          $ref: "#/components/responses/CreateMovieResponse"
+
+        '404':
+          $ref: "#/components/responses/ErrorResponse"
+
+    get:
+      summary: Récupère l'ensemble des films
+      operationId: getAllFilms
+      tags:
+        - Movies
+
+      parameters:
+        - $ref: "#/components/parameters/MovieNameParam"
+        - $ref: "#/components/parameters/MovieDescriptionParam"
+        - $ref: "#/components/parameters/LimitParam"
+        - $ref: "#/components/parameters/PageParam"
+
+      responses:
+        '200':
+          $ref: "#/components/responses/MoviesResponse"
+
+        '404':
+          $ref: "#/components/responses/ErrorResponse"
+        
+  /movie/{movieId}:
+    get: 
+      summary: Récupère un seul film selon son identifiant
+      operationId: getMovieById
+      tags:
+        - "Movies"
+      parameters:
+        - $ref: "#/components/parameters/MovieIdParam"
+      
+      responses:
+        '200':
+          $ref: "#/components/responses/MovieResponse"
+
+        '404':
+          $ref: "#/components/responses/ErrorResponse"
+      
+    put: 
+      summary: Met à jour un film
+      operationId: updateMovieById
+      tags:
+        - "Movies"
+      parameters:
+        - $ref: "#/components/parameters/MovieIdParam"
+
+      requestBody:
+        $ref: '#/components/requestBodies/UpdateMovidBody'
+
+      responses:
+        '200':
+          $ref: "#/components/responses/MovieResponse"
+
+        '422':
+          $ref: "#/components/responses/ErrorResponse"  
+
+        '404':
+          $ref: "#/components/responses/ErrorResponse"  
+
+    delete:
+      summary: Suppression d'un film
+      operationId: deleteMoviById
+      tags:
+        - "Movies"
+      parameters:
+        - $ref: "#/components/parameters/MovieIdParam"
+      responses:
+      
+        '200':
+          $ref: "#/components/responses/ConfirmDeleteResponse"
+
+        '404':
+          $ref: "#/components/responses/ErrorResponse"
+
+  /categorie/{categorieId}/movies:
+    get:
+      summary: Récupère un seul film selon son identifiant
+      operationId: getCategoriAndMoviesByQuery
+      tags:
+        - "Categories"
+      parameters:
+        - $ref: "#/components/parameters/CategorieIdParam"
+        - $ref: "#/components/parameters/LimitParam"
+        - $ref: "#/components/parameters/PageParam"
+      
+      responses:
+        '200':
+          $ref: "#/components/responses/CategorieMoviesResponse"
+
+        '404':
+          $ref: "#/components/responses/ErrorResponse"
+
+  /categorie/{categorieId}/:
+    get:
+      summary: Opération qui permet de récupérer une catégorie selon son identifiant
+      operationId: getCategoriesByStatus
+      tags:
+        - "Categories"
+      parameters:
+        - $ref: "#/components/parameters/CategorieIdParam"
+      
+      responses:
+        "200":
+          $ref: "#/components/responses/CategoriesResponse"
+        
+        "404":
+          $ref: "#/components/responses/ErrorResponse"
+      
+components:
+  
+  schemas:
+    
+    Movie:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: l'identifiant du film
+        name:
+          type: string
+          description: le nom du film
+        description:
+          type: string
+          description: la description du film
+        date:
+          type: string
+          format: date
+          description: la date de parution du film
+
+    Categorie:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+          description: l'identifiant de la catégorie
+        name:
+          type: string
+          description: le nom de la catégorie
+
+    CategorieMovies:
+      allOf:
+        - $ref: "#/components/schemas/Categorie"
+        - type: object
+          properties:
+            Movies:
+              type: array
+              items:
+                $ref: "#/components/schemas/Movie"
+
+    BaseBodyResponse:
+      type: object
+      description: Structure de base pour les reponses de l'API
+      properties:
+        data:
+          type: object
+          nullable: true
+        error:
+          type: object
+          nullable: true
+        meta:
+          type: object
+          nullable: false
+          $ref: '#/components/schemas/DefaultMeta'
+
+    DefaultMeta:
+      type: object
+      description: Contient des information diverse comme l'heure à laquel la réponse a été émit
+      properties:
+        dateEmit:
+          type: string
+          format: date-time
+          example: "2024-03-12T14:00:00Z"
+          description: La date à laquel la réponse à été émit
+    
+    PaginationMeta:
+      allOf:
+        - $ref: "#/components/schemas/DefaultMeta"
+        - type: object
+          properties:
+            pages: 
+              type: object
+              properties:
+                currentPage:
+                  type: integer
+                  format: int32
+                  description: la page actuel de l'utilisateur
+                totalPages:
+                  type: integer
+                  format: int32
+                  description: le nombre total de pages
+            result:
+              type: object
+              properties:
+                totalResult:
+                  type: integer
+                  format: int32
+                  description: le nombre total de valeurs
+                currentResult:
+                  type: integer
+                  format: int32
+                  description: le nombre actuelle de valeur
+            links:
+              type: object
+              properties:
+                previewPage:
+                  type: string
+                  description: le lien de la page précédente
+                nextPage:
+                  type: string
+                  description: le lien de la page suivante
+
+    BaseError:
+      description: Contient les informations d'une erreur émit par l'API
+      type: object
+      properties:
+        message:
+          type: string
+          example: 'Une erreur a été trouvé'
+          description: l'erreur détaillé
+        errorType:
+          type: string
+          example: BAD_REQUEST
+          description: le type d'erreur emit par l'api
+        statusCode:
+          type: integer
+          example: 404
+          description: le code d'erreur emit par l'api
+      required:
+        - message
+        - errorType
+        - statusCode
+
+  requestBodies:
+    
+    MovieCreateBody:
+      content: 
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+                description: le nom du film
+              description:
+                type: string
+                description: la description du film
+              date:
+                type: string
+                format: date
+                description: la date de parution du film
+              categoriesId:
+                type: array
+                items:
+                  type: integer
+                  format: int32
+                  example: 1
+
+    UpdateMovidBody:
+      content: 
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+                description: le nom du film
+              description:
+                type: string
+                description: la description du film
+              date:
+                type: string
+                format: date
+                description: la date de parution du film
+              categoriesId:
+                type: array
+                items:
+                  type: integer
+                  format: int32
+                  example: 1
+
+  responses:
+
+    MovieResponse:
+      description: Retourne le film
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/BaseBodyResponse'
+              - type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/Movie"
+
+    MoviesResponse:
+      description: Retournes l'ensemble des films
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/BaseBodyResponse'
+              - type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      films:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Movie'
+                  meta:
+                    type: object
+                    $ref: "#/components/schemas/PaginationMeta"
+
+    ConfirmDeleteResponse:
+      description: Retourne un message de confirmation de suppression
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/BaseBodyResponse'
+              - type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        example: le film à bien été supprimé
+
+    CreateMovieResponse:
+      description: Retourne un message de confirmation ou non de la création du film
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/BaseBodyResponse'
+              - type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        example: le film à bien été créer
+
+    CategorieMoviesResponse:
+      description: Retoune la catégorie et les films associé
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/BaseBodyResponse"
+              - type: object
+                properties:              
+                  data:
+                    type: object
+                    $ref: "#/components/schemas/CategorieMovies"
+                  meta:
+                    type: object
+                    $ref: "#/components/schemas/PaginationMeta"
+
+    CategoriesResponse:
+      description: Retourne un ensemble de catégories
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/BaseBodyResponse"
+              - type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      categorie:
+                          $ref: "#/components/schemas/Categorie"
+                  meta:
+                      $ref: "#/components/schemas/DefaultMeta"
+
+    ErrorResponse:
+      description: Retourne une erreur rencontré par l'API
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/BaseBodyResponse'
+              - type: object
+                properties:
+                  error:
+                    $ref: "#/components/schemas/BaseError"
+
+  parameters:
+
+    MovieIdParam:
+      in: path
+      name: movieId
+      schema:
+        type: integer
+        format: int32
+      required: true
+      description: l'identifiant du film souhaité
+
+    CategorieIdParam:
+      in: path
+      name: categorieId
+      schema:
+        type: integer
+        format: int32
+      required: true
+      description: l'identifiant de la catégorie
+
+    MovieNameParam:
+      in: query
+      name: name
+      schema:
+        type: string
+        description: le nom d'un ou plusieurs film a recherché
+      required: false
+
+    MovieDescriptionParam:
+      in: query
+      name: description
+      schema:
+        type: string
+        description: la description d'un ou plusieurs film a recherché
+      required: false
+
+    LimitParam:
+      in: query
+      name: limit
+      schema:
+        type: integer
+        format: int32
+        description: la limite maximal de valeurs à afficher pour une recherche
+      required: false
+      
+    PageParam:
+      in: query
+      name: page
+      schema:
+        type: integer
+        format: int32
+        description: la page actuel de l'utilisateur
+      required: false
+

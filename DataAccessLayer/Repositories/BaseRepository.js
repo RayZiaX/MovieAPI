@@ -109,6 +109,11 @@ class BaseRepository{
 
         return this.response.toPrototype()
     }
+
+    async existsByIdAsync(id){
+        let result = await this.entity.findByPk(id)
+        return result != undefined
+    }
 }
 
 module.exports = BaseRepository

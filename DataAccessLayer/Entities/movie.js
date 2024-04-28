@@ -1,14 +1,14 @@
 const { DataTypes, Model } = require('sequelize');
-require("dotenv").config()
 
 class Movie extends Model{}
 
-function initUserModel(context){
+function initMovieModel(context){
     Movie.init({
-        id_movie:{
+        idMovie:{
             type: DataTypes.INTEGER,
             primaryKey: true,
             autoIncrement: true,
+            field: "id_movie"
         },
         name: {
             type: DataTypes.STRING,
@@ -24,7 +24,7 @@ function initUserModel(context){
         }
     },{
         sequelize: context,
-        modelName: "Movie",
+        modelName: "movie",
         tableName: "movies",
         createdAt: false,
         updatedAt: false
@@ -33,4 +33,4 @@ function initUserModel(context){
     return Movie;
 }
 
-module.exports = initUserModel
+module.exports = initMovieModel

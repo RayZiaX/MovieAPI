@@ -1,5 +1,5 @@
 require('reflect-metadata')
-require("dotenv").config()
+require('dotenv').config()
 
 var bodyParser = require('body-parser')
 
@@ -9,6 +9,7 @@ const fs = require('fs');
 const yaml = require('js-yaml')
 
 const moviesRouter = require("./Api/Routes/movieRoutes")
+const categoriesRouter = require("./Api/Routes/categorieRoutes")
 const swagger = yaml.load(fs.readFileSync('./Api/Documentation/V1/Swagger.yaml'))
 const responseTemplate = require('./Api/Middleware/templateResponse')
 const logger = require('./Api/Middleware/logger')
@@ -22,6 +23,7 @@ app.use(responseTemplate)
 app.use(injectContext)
 
 app.use('/api/v1', moviesRouter);
+app.use('/api/v1', categoriesRouter);
 
 app.use('/api/v1/swagger', swaggerUi.serve, swaggerUi.setup(swagger))
 

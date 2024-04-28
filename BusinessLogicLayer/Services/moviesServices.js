@@ -1,49 +1,76 @@
-const MovieServicesResponse = require("./ResponsesServices/MovieServicesResponse")
+const BaseService = require("./BaseServices");
+const helper = require('../Helpers/helper')
 
-class MoviesServices{
+class MoviesServices extends BaseService{
     constructor(){
-        this.response = new MovieServicesResponse();
+        super()
     }
 
-    async createMovieAsync(req,data) {
-        this.result = await req.repositories.getMovieRepository().createAsync(data);
-        this.response.setStatus(this.result.success)
+    async createMovieAsync(req,body) {
+        let data = {
+            name: body.name,
+            description: body.description,
+            date: body.date,
+            categoriesId: body.categoriesId
+        }
 
-        if(this.result.success){
-            this.response.setData(this.result.entity)
+        let result = await req.repositories.getMovieRepository().createMovieWithCategorieAsync({data:data,tracking:false});
+
+        this.response.setStatus(result.success)
+        if(result.success){
+            this.response.setData(result.entity)
         }else{
-            this.response.setError(this.result.error)
+            this.response.setError(result.error)
         }
         return this.response.toPrototype()
     }
 
     async getAllMoviesAsync(req){
-        this.result = await req.repositories.getMovieRepository().getAllAsync()
-        this.response.setStatus(this.result.success)
-        if(this.result.success){
-            this.response.setData(this.result.entity)
+        let paginationObject = helper.makePagination(req.query)
+
+        let result = await req.repositories.getMovieRepository().getMoviesByCriteria({
+            name:req.query.name, description:req.query.description
+            , limit:paginationObject.limit, offset:paginationObject.offset
+            , trackin:false
+        })
+
+        this.response.setStatus(result.success)
+        if(this.response.success){
+            const data = {}
+            data.totalMovies = result.entity.count
+            data.movies = result.entity.rows
+            data.currentTotal = data.movies.length
+            data.pages = Math.ceil(result.entity.count / req.query.limit)
+            data.previewPage = Number(paginationObject.currentPage - 1)
+            data.nextPage = Number(paginationObject.currentPage) + 1
+            this.response.setData(data)
         }else{
-            this.response.setError(this.result.error)
+            this.response.setError(result.error)
         }
         return this.response.toPrototype()
     }
 
     async getMovieById(req,id){
-        this.result = await req.repositories.getMovieRepository().getByIdAsync(id)
-        this.response.setStatus(this.result.success)
-
-        if(this.result.success){
-            this.response.setData(this.result.entity)
+        let result = await req.repositories.getMovieRepository().getMovieAndCategorieById({id:id, tracking:false})
+        this.response.setStatus(result.success)
+        if(result.success){
+            this.response.setData(result.entity)
         }else{
-            this.response.setError(this.result.error)
+            this.response.setError(result.error)
         }
         return this.response.toPrototype()
     }
 
-    async updateMovieById(req,id,data){
-        this.result = await req.repositories.getMovieRepository().updateAsync(id,data)
+    async updateMovieById(req,id,body){
+        const data = {
+            name: body.name,
+            description: body.description,
+            date: body.date,
+            categoriesId: body.categoriesId
+        }
+        this.result = await req.repositories.getMovieRepository().updateMovieAsync({id:id,data:data,tracking:false})
         this.response.setStatus(this.result.success)
-
+        
         if(this.result.success){
             this.response.setData(this.result.entity)
         }else{
@@ -53,8 +80,10 @@ class MoviesServices{
     }
 
     async deleteMovieById(req,id){
-        this.result = await req.repositories.getMovieRepository().deleteAsync(id)
+        this.result = await req.repositories.getMovieRepository().deleteAsync({id:id})
+
         this.response.setStatus(this.result.success)
+        
         if(this.result.success){
             this.response.setData(this.result.entity)
         }else{

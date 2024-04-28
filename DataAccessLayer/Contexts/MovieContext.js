@@ -1,5 +1,7 @@
-require('dotenv').config()
 const { Sequelize } = require('sequelize');
+const initMovieModel = require('../Entities/Movie');
+const initCategoriModel = require('../Entities/Categorie');
+const initMovieCategorieModel = require('../Entities/MovieCategorie');
 
 class MovieContext extends Sequelize{
     constructor(dbname,username, password, host, provider){
@@ -8,6 +10,7 @@ class MovieContext extends Sequelize{
             dialect: provider,
             logging: process.env.ENV === "DEV" && process.env.DB_LOG === "true"
         })
+        this._onModelCreating()
     }
 
     async testConnexionAsync(){
@@ -27,6 +30,28 @@ class MovieContext extends Sequelize{
                 }
             }
         }
+    }
+
+    _onModelCreating(){
+        this.categories = initCategoriModel(this)
+        this.movies = initMovieModel(this)
+        this.moviesCategories = initMovieCategorieModel(this)
+        this._onModelConfigure()
+    }
+
+    _onModelConfigure(){
+        this.categories.belongsToMany(this.movies, {
+            as: "movies",
+            through: "movies_categories",
+            foreignKey: "id_categorie",
+            otherKey: "id_movie"
+        })
+        this.movies.belongsToMany(this.categories, {
+            as: "categories",
+            through: "movies_categories",
+            foreignKey: "id_movie",
+            otherKey: "id_categorie"
+        })
     }
 }
 

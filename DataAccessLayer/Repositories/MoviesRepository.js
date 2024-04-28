@@ -2,6 +2,9 @@ const { where, Op } = require('sequelize');
 const BaseRepository = require('./BaseRepository');
 const ErrorRepository = require('./Utils/ErrorRepository');
 
+/**
+ * Repository qui permet de gérer les différentes actions coté base de données pour l'entité "movie"
+ */
 class MoviesRepository extends BaseRepository{
     constructor(context,entity){
         super(context,entity,"Movie");

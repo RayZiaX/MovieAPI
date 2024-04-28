@@ -4,7 +4,12 @@ class CategoriesServices extends BaseService{
     constructor(){
         super()
     }
-
+/**
+ * Méthode qui permet de récupérer une categorie selon son identifiant
+ * @param {la requête} req 
+ * @param {l'identifiant de la catégorie} id 
+ * @returns une réponse contenant un status (true/false) de l'état du processus et de la données qu'elle contient une erreur ou l'entité
+ */
     async getCategorieByIdAsync (req,id){
         let result = await req.repositories.getCategoriRepository().getByIdAsync({id: id, tracking: false})
         this.response.setStatus(result.success)
@@ -17,6 +22,12 @@ class CategoriesServices extends BaseService{
         return this.response.toPrototype()
     }
 
+    /**
+     * Méthode qui permet de récupérer une categorie et ses films selon son identifiant
+     * @param {la requête} req 
+     * @param {l'identifiant de la categorie} id 
+     * @returns une réponse contenant un status (true/false) de l'état du processus et de la données qu'elle contient une erreur ou l'entité avec ses associations
+     */
     async getCategorieAndMoviesAsync(req, id){
         let paginationObject = helper.makePagination(req.query)
 

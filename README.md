@@ -16,7 +16,7 @@ Ce projet est une API réaliser avec l'aide de [ExpressJS](https://expressjs.com
 
 4. Dans le projet `MovieAPI` renommer le fichier `.env.sqlite.exemple` par `.env`.
 
-5. Fournissez les informations pour la base de données <u>sqlite ne prend pas de non d'utilisateur, de mot de passe et d'hôte</u>. Ajout un port (si rien de renseigner alors c'est le port 5000 qui est pris) de l'api.
+5. Fournissez les informations pour la base de données **sqlite ne prend pas de nom d'utilisateur, de mot de passe et d'hôte**</u>**. Ajout un port (si rien de renseigner alors c'est le port 5000 qui est pris) de l'api.
 
 6. Dans le terminal de commande (ou l'invite de commande) executer la commande `npm install` pour récupérer les différentes dépendance du projet.
 

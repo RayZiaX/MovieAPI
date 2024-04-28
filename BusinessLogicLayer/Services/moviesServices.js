@@ -14,7 +14,11 @@ class MoviesServices extends BaseService{
             categoriesId: body.categoriesId
         }
 
-        let result = await req.repositories.getMovieRepository().createMovieWithCategorieAsync({data:data,tracking:false});
+        let result = await req.repositories.getCategoriRepository().existsRange(data.categoriesId)
+        
+        if(result.success){
+            result = await req.repositories.getMovieRepository().createMovieWithCategorieAsync({data:data,tracking:false});
+        }
 
         this.response.setStatus(result.success)
         if(result.success){
@@ -68,13 +72,17 @@ class MoviesServices extends BaseService{
             date: body.date,
             categoriesId: body.categoriesId
         }
-        this.result = await req.repositories.getMovieRepository().updateMovieAsync({id:id,data:data,tracking:false})
-        this.response.setStatus(this.result.success)
+        let result = await req.repositories.getCategoriRepository().existsRange(data.categoriesId)
+        if(result.success){
+            result = await req.repositories.getMovieRepository().updateMovieAsync({id:id,data:data,tracking:false})
+        }
         
-        if(this.result.success){
-            this.response.setData(this.result.entity)
+        this.response.setStatus(result.success)
+        
+        if(result.success){
+            this.response.setData(result.entity)
         }else{
-            this.response.setError(this.result.error)
+            this.response.setError(result.error)
         }
         return this.response
     }

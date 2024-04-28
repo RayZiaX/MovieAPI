@@ -8,27 +8,30 @@ class ControllerResponse{
 
     setData(data){
         this.data = data
+        this.error = undefined
     }
     setHalData(halData){
         this.halData = halData
     }
     setError(error){
         this.error = error
+        this.data = undefined
+        this.halData = undefined
     }
     setMeta(meta){
         this.meta = meta
     }
 
-    getData(data){
+    getData(){
         return this.data
     }
-    getHalData(halData){
+    getHalData(){
         return this.halData
     }
-    getError(error){
+    getError(){
         return this.error
     }
-    getMeta(meta){
+    getMeta(){
         return this.meta
     }
 

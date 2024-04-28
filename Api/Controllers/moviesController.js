@@ -78,11 +78,8 @@ class MovieController extends BaseController{
 
             res.sendData(this.response.toPrototype(),200, new Date())
         }else{
-            if(this.config.environment === "DEV"){
-                res.sendDevError(this.serviceResponse.error.message, this.serviceResponse.error.statuscode, new Date(), this.serviceResponse.error.technicalMessage)
-            }else{
-                res.sendError(this.serviceResponse.error.message, this.serviceResponse.error.statuscode, new Date())
-            }
+            this.response.setError(this.serviceResponse.error)
+            res.sendError(this.response.toPrototype(), 404, new Date())
         }
     }
 }

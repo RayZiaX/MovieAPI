@@ -14,11 +14,8 @@ class MovieController extends BaseController{
             this.response.setHalData(this.halConverter.buildSingleHalObject(req,this.response.getData(),"movie"))
             res.sendData(this.response.toPrototype(),201, new Date())
         }else{
-            if(this.config.environment === "DEV"){
-                res.sendDevError(this.serviceResponse.error.message, this.serviceResponse.error.statuscode, new Date(), this.serviceResponse.error.technicalMessage)
-            }else{
-                res.sendError(this.serviceResponse.error.message, this.serviceResponse.error.statuscode, new Date())
-            }
+            this.response.setError(this.serviceResponse.error)
+            res.sendError(this.response.toPrototype(), this.serviceResponse.error.statuscode, new Date())
         }
     }
 
@@ -42,11 +39,8 @@ class MovieController extends BaseController{
 
             res.sendData(this.response.toPrototype(),200, meta.toPrototype())
         }else{
-            if(this.config.environment === "DEV"){
-                res.sendDevError(this.serviceResponse.error.message, this.serviceResponse.error.statuscode, new Date(), this.serviceResponse.error.technicalMessage)
-            }else{
-                res.sendError(this.serviceResponse.error.message, this.serviceResponse.error.statuscode, new Date())
-            }
+            this.response.setError(this.serviceResponse.error)
+            res.sendError(this.response.toPrototype(), this.serviceResponse.error.statuscode, new Date())
         }
     }
 
@@ -58,7 +52,7 @@ class MovieController extends BaseController{
             res.sendData(this.response.toPrototype(),200, new Date())
         }else{
             this.response.setError(this.serviceResponse.error)
-            res.sendError(this.response.toPrototype().getError(), 404, new Date())
+            res.sendError(this.response.toPrototype(), 404, new Date())
         }
     }
     
@@ -70,11 +64,8 @@ class MovieController extends BaseController{
             this.response.setHalData(this.halConverter.buildSingleHalObject(req,this.response.getData(),"movie"))
             res.sendData(this.response.toPrototype(),200, new Date())
         }else{
-            if(this.config.environment === "DEV"){
-                res.sendDevError(this.serviceResponse.error.message, this.serviceResponse.error.statuscode, new Date(), this.serviceResponse.error.technicalMessage)
-            }else{
-                res.sendError(this.serviceResponse.error.message, this.serviceResponse.error.statuscode, new Date())
-            }
+            this.response.setError(this.serviceResponse.error)
+            res.sendError(this.response.toPrototype(), 404, new Date())
         }
     }
 

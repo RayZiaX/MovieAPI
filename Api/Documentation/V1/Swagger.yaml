@@ -76,6 +76,9 @@ paths:
       parameters:
         - $ref: "#/components/parameters/MovieIdParam"
 
+      requestBody:
+        $ref: '#/components/requestBodies/UpdateMovidBody'
+
       responses:
         '200':
           $ref: "#/components/responses/MovieResponse"
@@ -119,16 +122,14 @@ paths:
         '404':
           $ref: "#/components/responses/ErrorResponse"
 
-  /categories:
+  /categorie/{categorieId}/:
     get:
-      summary: Opération qui permet de récupérer les catégories selon le status
+      summary: Opération qui permet de récupérer une catégorie selon son identifiant
       operationId: getCategoriesByStatus
       tags:
         - "Categories"
       parameters:
-        - $ref: "#/components/parameters/CategorieStatusParam"
-        - $ref: "#/components/parameters/PageParam"
-        - $ref: "#/components/parameters/LimitParam"
+        - $ref: "#/components/parameters/CategorieIdParam"
       
       responses:
         "200":
@@ -209,24 +210,37 @@ components:
         - $ref: "#/components/schemas/DefaultMeta"
         - type: object
           properties:
-            currentPage:
-              type: integer
-              format: int32
-              description: la page actuel de l'utilisateur
-            totalPages:
-              type: integer
-              format: int32
-              description: le nombre total de pages
-            totalResult:
-              type: integer
-              format: int32
-              description: le nombre de ligne total en base
-            previewPage:
-              type: string
-              description: le lien de la page précédente
-            nextPage:
-              type: string
-              description: le lien de la page suivante
+            pages: 
+              type: object
+              properties:
+                currentPage:
+                  type: integer
+                  format: int32
+                  description: la page actuel de l'utilisateur
+                totalPages:
+                  type: integer
+                  format: int32
+                  description: le nombre total de pages
+            result:
+              type: object
+              properties:
+                totalResult:
+                  type: integer
+                  format: int32
+                  description: le nombre total de valeurs
+                currentResult:
+                  type: integer
+                  format: int32
+                  description: le nombre actuelle de valeur
+            links:
+              type: object
+              properties:
+                previewPage:
+                  type: string
+                  description: le lien de la page précédente
+                nextPage:
+                  type: string
+                  description: le lien de la page suivante
 
     BaseError:
       description: Contient les informations d'une erreur émit par l'API
@@ -290,6 +304,12 @@ components:
                 type: string
                 format: date
                 description: la date de parution du film
+              categoriesId:
+                type: array
+                items:
+                  type: integer
+                  format: int32
+                  example: 1
 
   responses:
 
@@ -385,12 +405,10 @@ components:
                   data:
                     type: object
                     properties:
-                      categories:
-                        type: array
-                        items:
+                      categorie:
                           $ref: "#/components/schemas/Categorie"
                   meta:
-                      $ref: "#/components/schemas/PaginationMeta"
+                      $ref: "#/components/schemas/DefaultMeta"
 
     ErrorResponse:
       description: Retourne une erreur rencontré par l'API
@@ -414,41 +432,7 @@ components:
         format: int32
       required: true
       description: l'identifiant du film souhaité
-    
-    MovieNameParam:
-      in: query
-      name: name
-      schema:
-        type: string
-        description: le nom d'un ou plusieurs film a recherché
-      required: true
 
-    MovieDescriptionParam:
-      in: query
-      name: description
-      schema:
-        type: string
-        description: la description d'un ou plusieurs film a recherché
-      required: true
-
-    LimitParam:
-      in: query
-      name: limit
-      schema:
-        type: integer
-        format: int32
-        description: la limite maximal de valeurs à afficher pour une recherche
-      required: true
-      
-    PageParam:
-      in: query
-      name: page
-      schema:
-        type: integer
-        format: int32
-        description: la page actuel de l'utilisateur
-      required: true
-      
     CategorieIdParam:
       in: path
       name: categorieId
@@ -458,10 +442,37 @@ components:
       required: true
       description: l'identifiant de la catégorie
 
-    CategorieStatusParam:
+    MovieNameParam:
       in: query
-      name: catStatus
+      name: name
       schema:
         type: string
-      required: true
-      description: le statut de la catégorie
+        description: le nom d'un ou plusieurs film a recherché
+      required: false
+
+    MovieDescriptionParam:
+      in: query
+      name: description
+      schema:
+        type: string
+        description: la description d'un ou plusieurs film a recherché
+      required: false
+
+    LimitParam:
+      in: query
+      name: limit
+      schema:
+        type: integer
+        format: int32
+        description: la limite maximal de valeurs à afficher pour une recherche
+      required: false
+      
+    PageParam:
+      in: query
+      name: page
+      schema:
+        type: integer
+        format: int32
+        description: la page actuel de l'utilisateur
+      required: false
+

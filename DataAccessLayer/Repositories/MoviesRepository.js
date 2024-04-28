@@ -40,11 +40,11 @@ class MoviesRepository extends BaseRepository{
         return this.response.toPrototype()
     }
 
-    async createMovieWithCategorieAsync({data:{name,description,date,categorieId}, tracking=false}){
+    async createMovieWithCategorieAsync({data:{name,description,date,categoriesId}, tracking=false}){
         try {
             let movie = await this.createAsync({data:{name, description, date}, tracking:tracking});
             if(movie.success){
-                await Promise.all(categorieId.map(id => {
+                await Promise.all(categoriesId.map(id => {
                     return this.context.moviesCategories.create({movieId: movie.entity.idMovie,categorieId: id})
                 }))
     
@@ -79,10 +79,10 @@ class MoviesRepository extends BaseRepository{
             oldmovie.entity.date = fields.date;
             
             await oldmovie.entity.save()
-
+            console.log(data.categoriesId)
             await this.context.moviesCategories.destroy({where: {id_movie: id}})
 
-            await Promise.all(data.categorieId.map(cat => {
+            await Promise.all(data.categoriesId.map(cat => {
                 return this.context.moviesCategories.create({movieId: id,categorieId: cat})
             }))
 
@@ -91,6 +91,7 @@ class MoviesRepository extends BaseRepository{
             this.response.setState(true)
             this.response.setEntity(movie.entity)
         } catch (error) {
+            console.log(error)
             this.response.setState(false)
             this.response.setError(new ErrorRepository(`Une erreur c'est produite durant la modification du ${this.entityType}`,500,error))
         }

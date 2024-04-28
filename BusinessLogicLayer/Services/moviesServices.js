@@ -11,7 +11,7 @@ class MoviesServices extends BaseService{
             name: body.name,
             description: body.description,
             date: body.date,
-            categorieId: body.categorieId
+            categoriesId: body.categoriesId
         }
 
         let result = await req.repositories.getMovieRepository().createMovieWithCategorieAsync({data:data,tracking:false});
@@ -66,7 +66,7 @@ class MoviesServices extends BaseService{
             name: body.name,
             description: body.description,
             date: body.date,
-            categorieId: body.categorieId
+            categoriesId: body.categoriesId
         }
         this.result = await req.repositories.getMovieRepository().updateMovieAsync({id:id,data:data,tracking:false})
         this.response.setStatus(this.result.success)

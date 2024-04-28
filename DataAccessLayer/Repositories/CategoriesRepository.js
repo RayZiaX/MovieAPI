@@ -2,7 +2,9 @@ const { where, Op } = require("sequelize");
 const BaseRepository = require("./BaseRepository");
 const ErrorRepository = require('./Utils/ErrorRepository');
 
-
+/**
+ * Repository qui permet de gérer les différentes actions coté base de données pour l'entité "categorie"
+ */
 class CategoriesRepository extends BaseRepository{
     constructor(context,entity){
         super(context,entity, "categorie")
@@ -65,6 +67,11 @@ class CategoriesRepository extends BaseRepository{
         return this.response.toPrototype()
     }
 
+    /**
+     * Méthode qui permet de vérifier si les différentes identifiant contenu dans le tableau sont présent en base
+     * @param {les différents identifiant de categories} ids 
+     * @returns 
+     */
     async existsRange(ids){
         try {
             let count = await this.context.categories.count({

@@ -1,7 +1,9 @@
 const ErrorRepository = require('./Utils/ErrorRepository')
 const ResponseRepositories = require('./Utils/ResponseRepositories')
 
-
+/**
+ * Repository réposotory de base qui permet de réaliser des actions générique pour une entité
+ */
 class BaseRepository{
     constructor(context,entity, type){
         this.context = context

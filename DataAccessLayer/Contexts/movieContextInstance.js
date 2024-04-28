@@ -18,6 +18,7 @@ if(process.env.DB_DIALECT.toLocaleLowerCase() === 'postgres'){
     }
 }
 
+// création de l'instance du contexte (singleton)
 const movieContextInstance = new MovieContext(process.env.DB_NAME, process.env.DB_USER,process.env.DB_PASS,dbContextOptions)
 
 module.exports = movieContextInstance

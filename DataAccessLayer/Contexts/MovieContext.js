@@ -3,6 +3,9 @@ const initMovieModel = require('../Entities/Movie');
 const initCategoriModel = require('../Entities/Categorie');
 const initMovieCategorieModel = require('../Entities/MovieCategorie');
 
+/**
+ * Class de l'orm qui réaliser la communication avec la base de données
+ */
 class MovieContext extends Sequelize{
     constructor(dbname,username, password,dbContextOptions){
         super(dbname,username,password,dbContextOptions)
@@ -28,6 +31,9 @@ class MovieContext extends Sequelize{
         }
     }
 
+    /**
+     * Méthode qui permet d'instancier les entités
+     */
     _onModelCreating(){
         this.categories = initCategoriModel(this)
         this.movies = initMovieModel(this)
@@ -35,6 +41,9 @@ class MovieContext extends Sequelize{
         this._onModelConfigure()
     }
 
+    /**
+     * Méthode qui permet de configurer les entités
+     */
     _onModelConfigure(){
         this.categories.belongsToMany(this.movies, {
             as: "movies",

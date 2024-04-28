@@ -1,4 +1,11 @@
 const {Builder} = require('xml2js')
+
+/**
+ * Fonction qui permet d'envoyer un réponse au client
+ * @param {la requête} req 
+ * @param {l'objet réponse de express js} res 
+ * @param {l'objet qui constitu la réponse envoyé au client} param2 
+ */
 function sendResponse(req,res, {data = {}, error = {}, meta = { timespan: new Date().toISOString()}, statusCode = 400, technicalError = undefined}){
     const responseObject = {
         data: data.data || {},
@@ -7,10 +14,10 @@ function sendResponse(req,res, {data = {}, error = {}, meta = { timespan: new Da
         meta: meta
     }
 
-    if((responseObject.error.technicalError != undefined || responseObject.error.technicalError !== '') && process.env.ENV == "DEV"){
-        responseObject.error.technicalError = technicalError
+    if((responseObject.error.technicalMessage != undefined || responseObject.error.technicalMessage !== '') && process.env.ENV == "DEV"){
+        responseObject.error.technicalMessage = technicalError
     }else{
-        delete responseObject.error.technicalError
+        delete responseObject.error.technicalMessage
     }
 
 
@@ -35,17 +42,24 @@ function sendResponse(req,res, {data = {}, error = {}, meta = { timespan: new Da
     }
 }
 
+/**
+ * Middleware qui permet d'injecter 2 fonction dans l'objet res l'envoie de réponse au client
+ * @param {la requête} req 
+ * @param {l'objet réponse de express js} res 
+ * @param {le callback} next 
+ */
 function templateResponse (req,res,next){
     res.sendData = (data,statusCode = 200, meta = { timespan: new Date().toISOString()}) => {
         sendResponse(req,res, {data: data, statusCode: statusCode, meta: meta})
     };
 
     res.sendError = (error, statusCode = 400, meta = { timespan: new Date().toISOString()}) => {
-        sendResponse(req,res, {error: error, statusCode: statusCode, meta: meta})
+        if(error.error == undefined){
+            sendResponse(req,res, {error: error, statusCode: statusCode, meta: meta})
+        }else{
+            sendResponse(req,res, {error: error.error, statusCode: statusCode, meta: meta})
+        }
     };
-    res.sendDevError = (error, statusCode = 400, meta = { timespan: new Date().toISOString()},technicalError)=>{
-        sendResponse(req,res,{error: error, statusCode: statusCode, meta: meta, technicalError: technicalError})
-    }
     next();
 }
 

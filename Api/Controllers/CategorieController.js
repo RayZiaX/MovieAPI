@@ -31,13 +31,13 @@ class CategorieController extends BaseController{
             const data = this.serviceResponse.data
 
             
-            let paginationObject = this._buildPaginationObject(query,baseUrl,data.nextPage,Number(req.query.page),data.previewPage,data.pages)
+            let paginationObject = this._buildPaginationObject(query,baseUrl,data.nextPage,Number(req.query.page),data.previewPage,data.pages,data.movieCount)
 
             this.response.setData(data.categorie)
             this.response.setHalData(this.halConverter.paginationHalCategories(req,this.response.getData(),paginationObject))
-            let meta = new PaginationMeta(Number(req.query.page),data.pages,data.movieCount,paginationObject.prev.href,paginationObject.next.href)
+            let meta = new PaginationMeta(Number(req.query.page),data.pages,data.movieCount,data.currentCountMovie,paginationObject.prev.href,paginationObject.next.href)
             this.response.setMeta(meta)
-            res.sendData(this.response,200, meta)
+            res.sendData(this.response,200, meta.toPrototype())
 
         }else{
             this.response.setError(this.serviceResponse.error)

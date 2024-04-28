@@ -39,7 +39,7 @@ class BaseController{
     * @param {*} last 
     * @returns un objet pour la pagination
     */
-       _buildPaginationObject(query,baseUrl,nextPage,currentPage,previewPage, last){
+       _buildPaginationObject(query,baseUrl,nextPage,currentPage,previewPage, last,totalEntities){
         
         let paginationObject = {
             next:{},
@@ -49,10 +49,13 @@ class BaseController{
             last: {}
         }
         
-        query["page"] = nextPage
-        paginationObject.next = {
-            href: this.buildQueryRequest(baseUrl,query)
+        if((currentPage * query["limit"]) < totalEntities){
+            query["page"] = nextPage
+            paginationObject.next = {
+                href: this.buildQueryRequest(baseUrl,query)
+            }
         }
+
 
         if(previewPage >= 1){
             query["page"] = previewPage

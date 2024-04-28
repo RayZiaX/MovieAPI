@@ -37,8 +37,9 @@ class MoviesServices extends BaseService{
         this.response.setStatus(result.success)
         if(this.response.success){
             const data = {}
-            data.movieCount = result.entity.count
+            data.totalMovies = result.entity.count
             data.movies = result.entity.rows
+            data.currentTotal = data.movies.length
             data.pages = Math.ceil(result.entity.count / req.query.limit)
             data.previewPage = Number(paginationObject.currentPage - 1)
             data.nextPage = Number(paginationObject.currentPage) + 1

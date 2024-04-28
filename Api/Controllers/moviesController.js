@@ -27,20 +27,20 @@ class MovieController extends BaseController{
         if(this.serviceResponse.success){
             const baseUrl = this.getBaseURL(req);
             const data = this.serviceResponse.data
-
+            
             let query = {
                 "name": req.query.name,
                 "description": req.query.description,
-                "page": data.nextPage,
+                "page": 0,
                 "limit": req.query.limit
             }
 
-            this.response.setData(data)
-            let paginationObject = this._buildPaginationObject(query,baseUrl,data.nextPage,req.query.page,data.previewPage, data.pages)
-            this.response.setHalData(this.halConverter.paginationHalMovies(req,data.movies,paginationObject))
-            let meta = new PaginationMeta(Number(req.query.page),data.pages,data.movieCount,paginationObject.prev.href,paginationObject.next.href)
+            this.response.setData(data.movies)
+            let paginationObject = this._buildPaginationObject(query,baseUrl,data.nextPage,req.query.page,data.previewPage, data.pages,data.totalMovies)
+            this.response.setHalData(this.halConverter.paginationHalMovies(req,this.response.getData(),paginationObject))
+            let meta = new PaginationMeta(Number(req.query.page),data.pages,data.totalMovies,data.currentTotal,paginationObject.prev.href,paginationObject.next.href)
 
-            res.sendData(this.response.toPrototype(),200, meta)
+            res.sendData(this.response.toPrototype(),200, meta.toPrototype())
         }else{
             if(this.config.environment === "DEV"){
                 res.sendDevError(this.serviceResponse.error.message, this.serviceResponse.error.statuscode, new Date(), this.serviceResponse.error.technicalMessage)

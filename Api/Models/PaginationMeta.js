@@ -1,23 +1,31 @@
 const DefaultMeta = require('./DefaultMeta')
 
 class PaginationMeta extends DefaultMeta{
-    constructor(currentPage,totalPages,totalResult,previewPage, nextPage){
+    constructor(currentPage,totalPages,totalResult,currentResult,previewPage, nextPage){
         super()
         this.currentPage = currentPage;
         this.totalPages = totalPages;
         this.totalResult = totalResult;
+        this.currentResult = currentResult;
         this.previewPage = previewPage;
         this.nextPage = nextPage;
     }
 
     toPrototype(){
         return {
-            currentPage:this.currentPage,
-            totalPages:this.totalPages,
-            totalResult:this.totalResult,
             timespan: this.timespan.toISOString(),
-            previewPage: this.previewPage,
-            nextPage: this.nextPage
+            pages: {
+                totalPages:this.totalPages,
+                currentPage:this.currentPage
+            },
+            results: {
+                totalResult:this.totalResult,
+                currentResult:this.currentResult
+            },
+            links: {
+                previewPage: this.previewPage,
+                nextPage: this.nextPage
+            }
         }
     }
 }

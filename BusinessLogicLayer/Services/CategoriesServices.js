@@ -26,6 +26,7 @@ class CategoriesServices extends BaseService{
             const data = {}
             data.movieCount = result.entity.total
             data.categorie = result.entity.categorie
+            data.currentCountMovie = data.categorie.movies.length
             data.pages = Math.ceil(result.entity.total / req.query.limit)
             data.previewPage = Number(paginationObject.currentPage - 1)
             data.nextPage = Number(paginationObject.currentPage) + 1

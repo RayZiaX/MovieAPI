@@ -20,7 +20,7 @@ function sendResponse(req,res, {data = {}, error = {}, meta = { timespan: new Da
         responseObject.halData = undefined
         res.status(statusCode).json(responseObject)
     }else if(req.accepts('application/xml')){
-        responseObject.halData = undefined
+        delete responseObject.halData
         const xml = new Builder().buildObject(responseObject)
         res.status(statusCode)
         res.set('Content-Type', 'application/xml')

@@ -1,5 +1,7 @@
 # MovieAPI
 
+## Auteur
+MAGNE Jeremy (RayZiaX)
 ## Description du projet
 Ce projet est une API réaliser avec l'aide de [ExpressJS](https://expressjs.com/fr/), elle permet de lire, supprimer, modifier et créer des films (CRUD).
 

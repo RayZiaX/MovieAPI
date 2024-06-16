@@ -20,7 +20,7 @@ class MoviesServices extends BaseService{
     async createMovieAsync(req,body) {
         let categoriesId = body.categoriesId
 
-        let boMovie = new BoMovie({id: undefined, name: body.name, description: body.description, date: body.date})
+        let boMovie = new BoMovie({id: undefined, name: body.name, description: body.description, hasReservationsAvailable: body.hasReservationsAvailable, date: body.date})
         let ckecking = boMovie.checkData({ignoreId:true})
 
         if(!ckecking.ok){
@@ -41,7 +41,7 @@ class MoviesServices extends BaseService{
         if(result.success){
             result = await req.repositories.getMovieRepository().createMovieWithCategorieAsync({data:{
                 name:checkingValue.name, description:checkingValue.description,
-                date:checkingValue.date, categoriesId: categoriesId},tracking:false});
+                date:checkingValue.date, hasReservationsAvailable: checkingValue.hasReservationsAvailable,categoriesId: categoriesId},tracking:false});
         }
 
         this.response.setStatus(result.success)
@@ -111,7 +111,7 @@ class MoviesServices extends BaseService{
     async updateMovieById(req,id,body){
 
         let categoriesId = body.categoriesId
-        let boMovie = new BoMovie({id: id, name: body.name, description: body.description, date: body.date})
+        let boMovie = new BoMovie({id: id, name: body.name, description: body.description, hasReservationsAvailable: body.hasReservationsAvailable, date: body.date})
         let ckecking = boMovie.checkData({ignoreId:false})
         if(!ckecking.ok){
             this.response.setStatus(false)
@@ -142,7 +142,7 @@ class MoviesServices extends BaseService{
                 result = await req.repositories.getMovieRepository().updateMovieAsync(
                     {id:id,data:{
                     name:checkingValue.name, description:checkingValue.description,
-                    date:checkingValue.date, categoriesId: categoriesId}
+                    date:checkingValue.date, hasReservationsAvailable: checkingValue.hasReservationsAvailable, categoriesId: categoriesId}
                     ,tracking:false})
             }
 

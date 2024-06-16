@@ -54,6 +54,7 @@ class BaseRepository{
 
     async createAsync({data, tracking = false}) {
         try {
+            console.log(data)
             const movie = await this.entity.create(data);
             this.response.setState(true)
             if(tracking){

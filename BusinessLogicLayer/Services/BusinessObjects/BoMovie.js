@@ -1,8 +1,9 @@
 class BoMovie{
-    constructor({id,name,description,date}){
+    constructor({id,name,description,hasReservationsAvailable,date}){
         this.id = id
         this.name = name
         this.description = description
+        this.hasReservationsAvailable = hasReservationsAvailable
         this.date = date
     }
 
@@ -45,6 +46,11 @@ class BoMovie{
             result.error.errorIndicator.push("date non valide")
         }
 
+        if(this.hasReservationsAvailable == undefined){
+            result.ok = false
+            result.error.errorIndicator.push("le film doit avoir une réservation valide")
+        }
+
         if(result.error.errorIndicator.length > 0){
             result.ok = false
             result.error.errorMessage = "des données pour un film sont non conforme"
@@ -62,6 +68,7 @@ class BoMovie{
             id: this.id,
             name: this.name,
             description: this.description,
+            hasReservationsAvailable: this.hasReservationsAvailable,
             date: this.date
         }
     }

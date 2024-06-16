@@ -42,10 +42,9 @@ class MoviesRepository extends BaseRepository{
         return this.response.toPrototype()
     }
 
-    async createMovieWithCategorieAsync({data:{name,description,date,categoriesId}, tracking=false}){
+    async createMovieWithCategorieAsync({data:{name,description,date, hasReservationsAvailable,categoriesId}, tracking=false}){
         try {
-
-            let movie = await this.createAsync({data:{name, description, date}, tracking:tracking});
+            let movie = await this.createAsync({data:{name, description,hasReservationsAvailable, date}, tracking:tracking});
             if(movie.success){
                 await Promise.all(categoriesId.map(id => {
                     return this.context.moviesCategories.create({movieId: movie.entity.idMovie,categorieId: id})
@@ -55,11 +54,11 @@ class MoviesRepository extends BaseRepository{
                 this.response.setState(true)
                 this.response.setEntity(movie.entity)
             }else{
+                console.log(movie.error)
                 this.response.setError(movie.error)
             }
 
         } catch (error) {
-
             this.response.setState(false)
             this.response.setError(new ErrorRepository(`Une erreur c'est produite durant la création du films et l'association des ses catégories`,500,error).toPrototype())
         }
@@ -73,12 +72,14 @@ class MoviesRepository extends BaseRepository{
                 name: data.name,
                 description: data.description,
                 date: data.date,
+                hasReservationsAvailable: data.hasReservationsAvailable
             }
 
             let oldmovie = await this.getByIdAsync({id:id, tracking:true})
             oldmovie.entity.name = fields.name;
             oldmovie.entity.description = fields.description;
             oldmovie.entity.date = fields.date;
+            oldmovie.entity.hasReservationsAvailable = fields.hasReservationsAvailable;
             
             await oldmovie.entity.save()
             await this.context.moviesCategories.destroy({where: {id_movie: id}})

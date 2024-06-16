@@ -21,6 +21,10 @@ function initMovieModel(context){
         date:{
             type: DataTypes.DATE,
             allowNull: false
+        },
+        hasReservationsAvailable: {
+            type: DataTypes.BOOLEAN,
+            allowNull: false
         }
     },{
         sequelize: context,

@@ -158,6 +158,9 @@ components:
           type: string
           format: date
           description: la date de parution du film
+        hasReservationsAvailable:
+          type: boolean
+          description: indique si le film est disponible à la réservation
 
     Categorie:
       type: object
